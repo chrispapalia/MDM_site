@@ -1,0 +1,12 @@
+---
+title: "AC Plus - Spring 2020"
+---
+
+# Welcome to Data Visualization Using RStudio
+
+Welcome! This Arts/Co-ccurricular Plus program will provide you with the opportunity to learn a new coding langauge. Specifically, we will focus on using R for Statistical Computing to create visualization from larger data sets. 
+
+To start, we will introduce you to RStudio.cloud to avoid any issues in regards to installation and compatibility - all you'll need is a browser to run RStudio. For those of you with experience in RStudio, you'll be able to use Rstudio on your machine, but keep in mind that it might be easier to work with RStudio.cloud for these projects so that I can see your projects and code, and help troubleshhot if necessary.
+
+Let's begin by orienting ourselves with RStudio. If you're here to meet online, then you've seen me run through the basic set-up, but if you missed our live session, please look at this YouTube video to help you orient yourself with RStudio.cloud. 
+

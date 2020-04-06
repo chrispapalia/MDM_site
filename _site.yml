@@ -1,0 +1,8 @@
+navbar:
+  title: AC Plus - Spring 2020
+  left:
+  - text: Week 1
+    href: Week01-Covid-plot.html
+output:
+  html_document:
+    theme: flatly

@@ -1,0 +1,303 @@
+
+
+```{r}
+covid_cases_tidy %>% 
+  filter(country_region %in% c("Canada")) %>%
+  group_by(province_state) %>% 
+  mutate(daily_cases = c(cases[1], diff(cases))) %>% 
+  filter(daily_cases >= 10) %>%
+  mutate(days = 1:n()) %>%
+  mutate(label = if_else(days == max(days), 
+                         province_state, 
+                         NA_character_)) %>%
+  ungroup() %>%
+  mutate(province_state = fct_reorder(province_state, -cases)) %>% 
+  filter(province_state %in% c("Quebec", "Ontario", "British Columbia", "Alberta")) %>% 
+  ggplot(aes(days, cases, colour = province_state))+
+  geom_line()+
+  geom_text_repel(aes(label = label))+
+  scale_y_log10()
+```
+
+
+# Provincial Cases Plot
+
+```{r}
+covid_cases_tidy %>% 
+  filter(country_region == "Canada") %>%
+  filter(date > "2020-02-29") %>% 
+  mutate(province_state = fct_lump(province_state, n = 4, w = cases)) %>% 
+  mutate(province_state = fct_reorder(province_state, cases)) %>%
+  group_by(province_state, date) %>% 
+  summarise(cases = sum(cases)) %>%
+  ungroup() -> province_plot
+```
+
+
+### Labelled Plots###
+```{r}
+province_plot %>% 
+  ggplot(aes(x = date, y = cases))+
+  geom_line(aes(colour = province_state), size = 1.25)+
+  scale_color_discrete(name = "Province")+
+  geom_label_repel(data = subset(province_plot, date > "2020-03-29"), aes(label = paste(province_state, sep = "\n n = ", cases)))+
+  theme(legend.position = "none")
+```
+
+
+
+
+# Let's Investigate Canada Using Summaries
+
+```{r}
+covid_cases_tidy %>% 
+  filter(country_region == "Canada") %>%
+  group_by(date, province_state) %>% 
+  summarise(cases = sum(cases),
+            max = max(cases)) %>% 
+  ungroup()
+```
+
+# Cases in Canada
+
+```{r}
+covid_cases_tidy %>%
+  filter(country_region == "Canada") %>%
+  group_by(date, province_state) %>% 
+  summarise(cases = sum(cases)) %>% 
+  ungroup() %>% 
+  group_by(province_state) %>% 
+  summarise(total = max(cases)) %>% 
+  ungroup() %>% 
+  mutate(province_state = fct_lump(province_state, n = 4, w = total)) %>%
+  mutate(province_state = fct_reorder(province_state, total)) %>% 
+  ggplot(aes(province_state, total))+
+  geom_col(aes(fill = province_state ))+
+  coord_flip()+
+  scale_fill_brewer(palette = "Set1")+
+  theme(legend.position = "none")
+  
+ 
+```
+
+
+ 
+
+
+
+
+```{r}
+covid_cases_tidy %>% 
+  filter(country_region == "Canada") %>%
+  filter(date > "2020-02-29") %>% 
+  mutate(province_state = fct_lump(province_state, n = 4, w = cases)) %>% 
+  mutate(province_state = fct_reorder(province_state, cases)) %>%
+  group_by(province_state, date) %>% 
+  summarise(cases = sum(cases)) %>%
+  ungroup() %>% 
+  ggplot(aes(x = date, y = cases))+
+  geom_line(aes(colour = province_state), size = 1.25)+
+  scale_color_discrete(name = "Province")
+```
+
+
+
+# Log Scales Transformation
+```{r}
+covid_cases_tidy %>% 
+  filter(country_region == "Canada") %>%
+  filter(date > "2020-02-29") %>% 
+  group_by(province_state, date) %>% 
+  summarise(cases = sum(cases)) %>%
+  ungroup() %>% 
+  ggplot(aes(x = date, y = cases))+
+  geom_line(aes(colour = province_state), size = 1.25)+
+  scale_y_log10()
+```
+
+
+# Most Affected Countries and Canada
+
+```{r}
+covid_cases_tidy %>% 
+  filter(country_region %in% c("Spain", "France", "Italy", "China", "Canada", "United Kingdom", "US", "Iran", "Korea, South", "Germany")) %>%
+  filter(date > "2020-02-29") %>% 
+  group_by(country_region, date) %>% 
+  summarise(cases = sum(cases)) %>% 
+  ungroup() %>% 
+  ggplot(aes(x = date, y = cases))+
+  geom_line(aes(colour = country_region), size = 1.25)+
+  scale_y_continuous(labels = scales::comma_format())+
+  scale_color_brewer(name = "Country", palette = "Paired")
+```
+
+
+# Countries Most Affected By COVID-19 excluding China
+
+```{r}
+covid_cases_tidy %>% 
+  filter(country_region %in% c("Spain", "France", "Italy", "United Kingdom", "US", "Iran", "Canada", "Germany")) %>%
+  filter(date > "2020-02-29") %>% 
+  group_by(country_region, date) %>% 
+  summarise(cases = sum(cases)) %>% 
+  ungroup() %>% 
+  ggplot(aes(x = date, y = cases))+
+  geom_line(aes(colour = country_region), size = 1.25)+
+  scale_y_continuous(labels = scales::comma_format())+
+  scale_color_brewer(name = "Country", palette = "Dark2")+
+  labs(x = "Date", 
+       y = "Confirmed Cases", 
+       title = "COVID-19 Cases Confirmed", 
+       subtitle = "Data: Johns Hopkins CSSE")
+  
+```
+
+Log-10 Plot
+
+```{r}
+covid_cases_tidy %>% 
+  filter(country_region %in% c("Spain", "France", "Italy", "United Kingdom", "US", "Iran", "Korea, South", "Germany")) %>%
+  filter(date > "2020-02-29") %>% 
+  group_by(country_region, date) %>% 
+  summarise(cases = sum(cases)) %>% 
+  ungroup() %>% 
+  ggplot(aes(x = date, y = cases))+
+  geom_line(aes(colour = country_region), size = 1.25)+
+  scale_y_log10(labels = scales::comma_format())+
+  scale_color_brewer(name = "Country", palette = "Dark2")+
+  labs(x = "Date", 
+       y = "Confirmed Cases", 
+       title = "COVID-19 Cases Confirmed", 
+       subtitle = "Data: Johns Hopkins CSSE")
+  
+```
+
+
+## Linear Model
+
+Using a Day Counter
+
+
+Linear y
+```{r}
+covid_cases_tidy %>% 
+ filter(country_region %in% c("Spain", "France", "Italy", "United Kingdom", "US", "Iran", "Korea, South", "Germany")) %>%
+  filter(date > "2020-02-29") %>% 
+  group_by(country_region, date) %>% 
+  summarise(cases = sum(cases)) %>% 
+  ungroup() %>% 
+  mutate(n_day = day(date) - 1) %>% 
+  ggplot(aes(x = n_day, y = cases))+
+  geom_line(aes(colour = country_region), size = 1.25)+
+  scale_y_continuous(labels = scales::comma_format())+
+  scale_color_brewer(palette = "Dark2", name = "Country")+
+  labs(x = "Days Since 2020-03-01", 
+       y = "Confirmed Cases (Log Scale)", 
+       title = "COVID-19 Cases Confirmed", 
+       subtitle = "Data: Johns Hopkins CSSE")
+```
+
+Log2 y
+```{r}
+covid_cases_tidy %>% 
+  filter(country_region %in% c("Spain", "France", "Italy", "United Kingdom", "US", "Iran", "Korea, South", "Germany", "Canada")) %>%
+  filter(date > "2020-02-29") %>% 
+  group_by(country_region, date) %>% 
+  summarise(cases = sum(cases)) %>% 
+  ungroup() %>% 
+  mutate(n_day = day(date) - 1) %>%
+  ggplot(aes(x = n_day, y = cases))+
+  geom_line(aes(colour = country_region), size = 1.25)+
+  scale_y_continuous(labels = scales::comma_format())+
+  coord_trans(y = "log2")+
+  scale_color_brewer(palette = "Paired" , name = "Country")+
+  labs(x = "Days Since 2020-03-01", 
+       y = "Confirmed Cases (Log2 Scale)", 
+       title = "COVID-19 Cases Confirmed", 
+       subtitle = "Data: Johns Hopkins CSSE")
+```
+
+Log y
+
+```{r}
+covid_cases_tidy %>% 
+ filter(country_region %in% c("Spain", "France", "Italy", "United Kingdom", "US", "Iran", "Korea, South", "Germany")) %>%
+  filter(date > "2020-02-29") %>% 
+  group_by(country_region, date) %>% 
+  summarise(cases = sum(cases)) %>% 
+  ungroup() %>% 
+  mutate(n_day = day(date) - 1) %>% 
+  ggplot(aes(x = n_day, y = cases))+
+  geom_line(aes(colour = country_region), size = 1.25)+
+  scale_y_log10(labels = scales::comma_format())+
+  scale_color_brewer(palette = "Dark2", name = "Country")+
+  labs(x = "Days Since 2020-03-01", 
+       y = "Confirmed Cases (Log Scale)", 
+       title = "COVID-19 Cases Confirmed", 
+       subtitle = "Data: Johns Hopkins CSSE")
+```
+
+Log 10 Regression
+
+
+
+```{r}
+covid_cases_tidy %>% 
+ filter(country_region %in% c("Spain", "France", "Italy", "United Kingdom", "US", "Iran", "Korea, South", "Germany", "Canada")) %>%
+  filter(date > "2020-02-29") %>% 
+  group_by(country_region, date) %>% 
+  summarise(cases = sum(cases)) %>% 
+  ungroup() %>% 
+  mutate(n_day = day(date) - 1) %>%
+  lm(data = ., log10(cases) ~ n_day * country_region) %>% 
+  summary() %>% 
+  tidy()
+```
+
+Log 2 Regression
+
+```{r}
+covid_cases_tidy %>% 
+ filter(country_region %in% c("Spain", "France", "Italy", "United Kingdom", "US", "Iran", "Korea, South", "Germany", "Canada")) %>%
+  filter(date > "2020-02-29") %>% 
+  group_by(country_region, date) %>% 
+  summarise(cases = sum(cases)) %>% 
+  ungroup() %>% 
+  mutate(n_day = day(date) - 1) %>%
+  lm(data = ., log2(cases) ~ n_day * country_region) %>% 
+  summary()
+```
+
+
+Doubling Rates in Countries
+
+```{r}
+covid_cases_tidy %>% 
+ filter(country_region %in% c("Canada")) %>%
+  filter(date > "2020-02-29") %>% 
+  group_by(country_region, date) %>% 
+  summarise(cases = sum(cases)) %>% 
+  ungroup() %>% 
+  mutate(n_day = day(date) - 1) %>%
+  lm(data = ., log2(cases) ~ n_day) %>% 
+  summary() %>% 
+  tidy()
+```
+
+
+
+-----------Appendix------------
+
+
+Working on trying to find the "Day" 
+
+```{r}
+covid_cases_tidy %>% 
+  filter(`Country/Region` %in% c("Italy", "United Kingdom", "US", "Iran", "Korea, South", "Germany", "Canada")) %>%
+  filter(Date > "2020-02-29") %>% 
+  group_by(`Country/Region`, Date) %>% 
+  summarise(cases = sum(Cases)) %>% 
+  ungroup() %>% 
+  mutate(n_day = day(Date) - 1)
+```
+

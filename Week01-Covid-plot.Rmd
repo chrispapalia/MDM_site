@@ -1,0 +1,220 @@
+---
+title: "Week 1: Plotting the COVID-19 Outbreak"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, message = FALSE, warning = FALSE)
+```
+
+This document will walk you through how to create a plot similar to the one that you see below. It will use the data from Johns Hopkins University to loosely replicate a plot that shows the outbreak of COVID-19 for some countries, and for four provinces in Canada. 
+
+Here is the plot that we will try and replicate: 
+
+![Financial Times Plot of Deaths on a Log Scale](Fin_times_plot.png)
+
+Then, in Week 2, you will be able to create your own plots to show the outbreak in an area that you're interested in. 
+
+# Creating a Plot in R
+
+### 1. Load Libraries and Set a Theme
+
+In order to work with R, you'll need access to many different packages that allow the user to use different tools. Each of these packages below has a function. Most importantly, the tidyverse package allows the user to import, tidy, transform, and visualize data using commands that are relatively intuitive. 
+
+The other packages each perform some function in this module. 
+
+```{r Libraries, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(janitor)
+library(lubridate)
+library(tidymodels)
+library(ggrepel)
+library(knitr)
+```
+
+I have set the theme to light to avoid the gray background in graphics.
+
+```{r}
+theme_set(theme_light())
+```
+
+
+### 2. Load the Data
+
+We will load the data using the data source of the following website [Johns Hopkins CSSE Map](https://coronavirus.jhu.edu/map.html)
+
+In order to get the data, we will use a link to the Johns Hopkins CSSE data in GitHub. The following command will load the data for us using the `read_csv` command.
+
+```{r Load data, message=FALSE, warning=FALSE}
+covid_cases <- read_csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv")
+
+```
+
+Once you run this line of code, you should see the `covid_cases` object in the Environment pane. If you click the object in the environment pane, you can view the data in a tabel format in the *Source* pane in the upper left.
+
+### 3. Tidy and Transform the Data to Make a Plot
+
+#### A. Clean column Names
+
+You'll notice that when we view the file, it is not *tidy* data because each day is listed as a column rather than as an observation. We can inspect the column names with the command below.
+
+```{r, eval=FALSE}
+colnames(covid_cases)[5:ncol(covid_cases)]
+```
+
+It's also important to see that the dates are not in a nice format. We would pefer to use *YYYY-MM-DD* as our date input, so we will use the following command to rename the columns with the dates formatted correctly.
+
+```{r}
+old_names <- colnames(covid_cases)[5:ncol(covid_cases)]
+new_names <- parse_date(colnames(covid_cases)[5:ncol(covid_cases)], "%m/%d/%y")
+
+covid_cases<- covid_cases %>% 
+  rename_at(vars(old_names), function(x) new_names)
+
+```
+
+Then we will reshape the data into a long *tidy* format using the `pivot_longer()` command. Now for each county observation (row), we will move the dates under the country. We will call this new dataset `covid_cases_tidy`. You can inspect it in the environment to see how it looks different from the `covid_cases` that we input from GitHub. 
+
+```{r}
+covid_cases_tidy <- covid_cases %>% 
+  pivot_longer(
+    cols = -`Province/State`:-Long,  
+    names_to = "date", 
+    values_to = "cases"
+  ) %>% as_tibble() %>% 
+  mutate(date = as.Date(date)) %>% 
+  clean_names()
+ 
+```
+
+
+#### B.  Transform and Summarise the Data Using the Pipe Operator
+
+For the particular plot we're trying to make, we only want to use the data for the Provinces in Canada. So we need to filter the data to look only at what we're interested in. Once again, we can see the data by pressing on the `covid_cases_tidy` object in the environment pane in the upper right. 
+
+Let's look at the data of the top 10 most affected countries in the world and find that data using some commands that we can find in the `dplyr` package, which is part of the tidyverse. Since we know the data is tidy, that being each row represents a country's day of total cases, we can use use some statistical analysis to pull some information out of the data
+
+Let's see what are most affected countries are in the world are, and how many cases they have. We will use the pipe operator `%>%` to use the previous output at the input in the next line of code.
+
+```{r, echo=FALSE}
+covid_cases_tidy %>% # start with the tidy data
+  group_by(country_region) %>% # Make the data look at each country as one "group"
+  summarise(cases = max(cases)) %>%  #Knowing that each country's max value is the total number of cases
+  arrange(desc(cases)) %>% # arrange the countries by descending cases
+  head(20) %>%   # print only the first 20 in the list
+  kable() # Use the kable function to make the output a nice chart
+```
+
+### Create a Summary Plot
+
+
+Now that we have this data output, let's make our first plot of the data. This will be a bar graph that will show the twenty most-affected countries in the world. It will essentially take the output of the last code and use it to make a plot. 
+
+Some things to keep in mind. The output is a `tibble` which is a type of data frame that R likes work with. The data was initially `r nrow(covid_cases_tidy)` by `r ncol(covid_cases_tidy)` tibble and it's been converted into a 20 by 2 tibble.  
+
+
+The following plot, take the data from the chart and creates a plot to show the countries that are most affected by the COVID-19 outbreak.
+
+
+```{r, echo=FALSE, eval= TRUE}
+covid_cases_tidy %>% # start with the tidy data
+  group_by(country_region) %>% # Make the data look at each country as one "group"
+  summarise(cases = max(cases)) %>%  #Knowing that each country's max value is the total number of cases
+  arrange(desc(cases)) %>% # arrange the countries by descending cases
+  head(20) %>%  # pipe the 20 x 2 data into ggplot
+  mutate(country_region = fct_reorder(country_region, cases)) %>% # Reorder the plot by cases
+ # mutate(country_region = fct_lump(country_region, n = 10, w = cases)) %>% 
+  ggplot(aes(x = country_region, y = cases))+ # input data and aesthetic mapping the variables into a plot
+  geom_col(aes(fill = country_region))+ # note the use of the + signs to add layers to plots
+  coord_flip()+ # de-clutter the names
+  scale_fill_discrete()+
+  scale_y_continuous(labels = scales::comma_format())+ #log10 scale to show reasonable scale
+  theme(legend.position = "none") # removes legend, countries are on the side
+  
+```
+
+
+### COVID-19 Outbreak In A Plot
+
+Now that we have shown the countries most affected by COVID-19 in a summary plot, let's look at how some of this data in a time-series plot. In general, the growth of COVID-19 is an exponetial growth curve. For instance, we can look at some of the most affected countries in the world and see how their growth curves look. Let's choose, the US, Spain, Italy, and the UK. 
+
+We can view this data using the filter command, and then plotting it. One of the nice features in R, is that we are still using the basic dataset that we started with rather than needing to change it a bunch and create new sheets like we might need to in Excel. 
+
+```{r, echo=FALSE}
+covid_cases_tidy %>% 
+  filter(country_region %in% c( "US", "Italy", "Germany", "Spain", "United Kingdom")) %>% 
+  group_by(country_region, date) %>% 
+  select(country_region, date, cases) %>%
+  summarise(cases = sum(cases)) %>% 
+  ggplot(aes(date, cases, colour = country_region))+
+  geom_line(size = 1)+
+  scale_color_discrete(name = "Country")
+```
+
+In this plot, we can see the different growth rates of the countries, but it's difficult to determine where on the growth curve these countries are, so it's helpful to make a plot by the number of days since a certain number of cases.
+
+
+### COVID-19 Plots
+
+The plots below replicate many of the features of the financial times plot. Using RStudio.Cloud and by following along, you will be able to replicate the main features of the plot.
+
+```{r, echo=FALSE}
+covid_cases_tidy %>% 
+  filter(country_region %in% c("US", "Italy", "Spain", "United Kingdom", "Canada", "Germany")) %>%
+  group_by(country_region, date) %>%
+  summarise(cases = sum(cases)) %>% 
+  mutate(daily_cases = c(cases[1], diff(cases))) %>%
+  filter(daily_cases >= 10) %>% 
+  mutate(days = 1:n()) %>% 
+  mutate(label = if_else(days == max(days), 
+                         country_region, 
+                         NA_character_)) %>%
+  ungroup() %>%
+  ggplot(aes(days, cases, colour = country_region))+
+  geom_line(size = 1.25)+
+ geom_text_repel(aes(label = label), 
+                  nudge_x = 1, 
+                  na.rm = TRUE)+
+  scale_y_log10(labels = scales::comma_format())+
+  scale_color_discrete(name = "Country")+
+  theme(legend.position = "none")+
+  labs(title = "Is the Number of Cases Each Day Beginning to Decelerate?", 
+       x = "Days Since 10 Daily Cases First Recorded",
+       y = "Number of Cases (log 10)",
+       subtitle = "Data: Johns Hopkins CSSE",
+       caption = "Inspiration: John Burn Murdoch, FT\nEric Green, Duke")
+```
+
+ 
+
+```{r, echo=FALSE}
+covid_cases_tidy %>% 
+  filter(country_region %in% c("Canada")) %>%
+  group_by(province_state) %>% 
+  mutate(daily_cases = c(cases[1], diff(cases))) %>% 
+  filter(daily_cases >= 10) %>%
+  mutate(days = 1:n()) %>%
+  mutate(label = if_else(days == max(days), 
+                         province_state, 
+                         NA_character_)) %>%
+  ungroup() %>%
+  mutate(province_state = fct_reorder(province_state, -cases)) %>% 
+  filter(province_state %in% c("Quebec", "Ontario", "British Columbia", "Alberta")) %>% 
+  ggplot(aes(days, cases, colour = province_state))+
+  geom_line(size = 1)+
+  geom_text_repel(aes(label = label), 
+                  nudge_x = 1, 
+                  na.rm = TRUE)+
+  scale_y_log10()+
+  theme(legend.position = "none")+
+  labs(title = "Is there a Different Story in Canada?", 
+       x = "Days Since 10 Daily Cases First Recorded",
+       y = "Number of Cases (log 10)",
+       subtitle = "Data: Johns Hopkins CSSE",
+       caption = "Inspiration: John Burn Murdoch, FT\nEric Green, Duke")
+
+```
+
+
