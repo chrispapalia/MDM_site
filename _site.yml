@@ -1,3 +1,4 @@
+name: "AC Plus - Spring 2020"
 navbar:
   title: AC Plus - Spring 2020
   left:
@@ -6,3 +7,4 @@ navbar:
 output:
   html_document:
     theme: flatly
+    include:
