@@ -280,7 +280,7 @@ $(document).ready(function () {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="Week01-Covid-plot.html">Week 1</a>
+      <a href="Week01-Intro.html">Week 1</a>
     </li>
     <li>
       <a href="Week01-Intro-janitor-fix.html">Week 1 (Fix)</a>
@@ -347,10 +347,6 @@ new_names &lt;- parse_date(colnames(covid_cases)[5:ncol(covid_cases)], &quot;%m/
 
 covid_cases&lt;- covid_cases %&gt;% 
   rename_at(vars(old_names), function(x) new_names)</code></pre>
-<pre><code>## Note: Using an external vector in selections is ambiguous.
-## i Use `all_of(old_names)` instead of `old_names` to silence this message.
-## i See &lt;https://tidyselect.r-lib.org/reference/faq-external-vector.html&gt;.
-## This message is displayed once per session.</code></pre>
 <p>Then we will reshape the data into a long <em>tidy</em> format using the <code>pivot_longer()</code> command. Now for each county observation (row), we will move the dates under the country. We will call this new dataset <code>covid_cases_tidy</code>. You can inspect it in the environment to see how it looks different from the <code>covid_cases</code> that we input from GitHub.</p>
 <pre class="r"><code>covid_cases_tidy &lt;- covid_cases %&gt;% 
   pivot_longer(

@@ -12,7 +12,8 @@ For those of you with experience in RStudio, you'll be able to use Rstudio on yo
 
 See the [video link](https://youtu.be/ygEQl7_nXnc) for a screencast to join the class workspace.
 
-<iframe width="560" height="315" src="https://youtu.be/ygEQl7_nXnc" frameborder="0" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/ygEQl7_nXnc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 
 Let's begin by orienting ourselves with RStudio in the first week and work towards create a plot that shows the spread of COVID-19 in different countries around the world.
 
