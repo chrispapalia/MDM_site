@@ -10,9 +10,15 @@ To avoid the headaches dealing with remote setup any installation and update of 
 
 For those of you with experience in RStudio, you'll be able to use Rstudio on your machine, but keep in mind that it might be easier to work with RStudio.cloud for these projects so that I can see your projects and code, and help troubleshhot if necessary.
 
+See the [video link](https://youtu.be/ygEQl7_nXnc) for a screencast to join the class workspace.
+
+<iframe width="560" height="315" src="https://youtu.be/ygEQl7_nXnc" frameborder="0" allowfullscreen></iframe>
+
 Let's begin by orienting ourselves with RStudio in the first week and work towards create a plot that shows the spread of COVID-19 in different countries around the world.
 
 
 ![We will try to replicate this plot in the first two weeks](Fin_times_plot.png)
+
+
 
 

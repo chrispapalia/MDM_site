@@ -9,9 +9,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
+<meta name="author" content="Chris Papalia" />
 
 
-<title>Week 1: Plotting the COVID-19 Outbreak</title>
+<title>Week01-Intro</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -298,7 +299,9 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Week 1: Plotting the COVID-19 Outbreak</h1>
+<h1 class="title toc-ignore">Week01-Intro</h1>
+<h4 class="author">Chris Papalia</h4>
+<h4 class="date">4/9/2020</h4>
 
 </div>
 
@@ -344,6 +347,10 @@ new_names &lt;- parse_date(colnames(covid_cases)[5:ncol(covid_cases)], &quot;%m/
 
 covid_cases&lt;- covid_cases %&gt;% 
   rename_at(vars(old_names), function(x) new_names)</code></pre>
+<pre><code>## Note: Using an external vector in selections is ambiguous.
+## i Use `all_of(old_names)` instead of `old_names` to silence this message.
+## i See &lt;https://tidyselect.r-lib.org/reference/faq-external-vector.html&gt;.
+## This message is displayed once per session.</code></pre>
 <p>Then we will reshape the data into a long <em>tidy</em> format using the <code>pivot_longer()</code> command. Now for each county observation (row), we will move the dates under the country. We will call this new dataset <code>covid_cases_tidy</code>. You can inspect it in the environment to see how it looks different from the <code>covid_cases</code> that we input from GitHub.</p>
 <pre class="r"><code>covid_cases_tidy &lt;- covid_cases %&gt;% 
   pivot_longer(
@@ -456,20 +463,20 @@ covid_cases&lt;- covid_cases %&gt;%
 <p>Now that we have this data output, let’s make our first plot of the data. This will be a bar graph that will show the twenty most-affected countries in the world. It will essentially take the output of the last code and use it to make a plot.</p>
 <p>Some things to keep in mind. The output is a <code>tibble</code> which is a type of data frame that R likes work with. The data was initially 21384 by 6 tibble and it’s been converted into a 20 by 2 tibble.</p>
 <p>The following plot, take the data from the chart and creates a plot to show the countries that are most affected by the COVID-19 outbreak.</p>
-<p><img src="Week01-Covid-plot_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p><img src="Week01-Intro_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 </div>
 <div id="covid-19-outbreak-in-a-plot" class="section level3">
 <h3>COVID-19 Outbreak In A Plot</h3>
 <p>Now that we have shown the countries most affected by COVID-19 in a summary plot, let’s look at how some of this data in a time-series plot. In general, the growth of COVID-19 is an exponetial growth curve. For instance, we can look at some of the most affected countries in the world and see how their growth curves look. Let’s choose, the US, Spain, Italy, and the UK.</p>
 <p>We can view this data using the filter command, and then plotting it. One of the nice features in R, is that we are still using the basic dataset that we started with rather than needing to change it a bunch and create new sheets like we might need to in Excel.</p>
-<p><img src="Week01-Covid-plot_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p><img src="Week01-Intro_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <p>In this plot, we can see the different growth rates of the countries, but it’s difficult to determine where on the growth curve these countries are, so it’s helpful to make a plot by the number of days since a certain number of cases.</p>
 </div>
 <div id="covid-19-plots" class="section level3">
 <h3>COVID-19 Plots</h3>
 <p>The plots below replicate many of the features of the financial times plot. Using RStudio.Cloud and by following along, you will be able to replicate the main features of the plot.</p>
-<p><img src="Week01-Covid-plot_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
-<p><img src="Week01-Covid-plot_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p><img src="Week01-Intro_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p><img src="Week01-Intro_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 </div>
 </div>
 

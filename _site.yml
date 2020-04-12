@@ -3,7 +3,11 @@ navbar:
   title: AC Plus - Spring 2020
   left:
   - text: Week 1
-    href: Week01-Covid-plot.html
+    menu:
+    - text: Week 1
+      href: Week01-Intro.html
+    - text: Week 1 (Fix)
+      href: Week01-Intro-janitor-fix.html
 output:
   html_document:
     theme: flatly
