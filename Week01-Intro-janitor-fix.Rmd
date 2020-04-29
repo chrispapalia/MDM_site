@@ -130,7 +130,7 @@ covid_cases_tidy %>% # start with the tidy data
   mutate(country.region = fct_reorder(country.region, cases)) %>% # Reorder the plot by cases
  # mutate(country.region = fct_lump(country.region, n = 10, w = cases)) %>% 
   ggplot(aes(x = country.region, y = cases))+ # input data and aesthetic mapping the variables into a plot
-  geom_col(aes(fill = country.region))+ # note the use of the + signs to add layers to plots
+  geom_col(aes( fill = country.region))+ # note the use of the + signs to add layers to plots
   coord_flip()+ # de-clutter the names
   scale_fill_discrete()+
   scale_y_continuous(labels = scales::comma_format())+ #log10 scale to show reasonable scale
@@ -155,7 +155,10 @@ covid_cases_tidy %>%
   geom_line(size = 1)+
   scale_color_discrete(name = "Country")+
   scale_y_continuous(labels = scales::comma_format())
+  
 ```
+
+
 
 In this plot, we can see the different growth rates of the countries, but it's difficult to determine where on the growth curve these countries are, so it's helpful to make a plot by the number of days since a certain number of cases.
 
@@ -164,9 +167,25 @@ In this plot, we can see the different growth rates of the countries, but it's d
 
 The plots below replicate many of the features of the financial times plot. Using RStudio.Cloud and by following along, you will be able to replicate the main features of the plot.
 
-```{r, echo=FALSE}
+```{r}
 covid_cases_tidy %>% 
   filter(country.region %in% c("US", "Italy", "Spain", "United Kingdom", "Canada", "Germany")) %>%
+  group_by(country.region, date) %>%
+  summarise(cases = sum(cases)) %>% 
+  mutate(daily_cases = c(cases[1], diff(cases))) %>%
+  filter(daily_cases >= 10) %>% 
+  mutate(days = 1:n()) %>% 
+  mutate(label = if_else(days == max(days), 
+                         country.region, 
+                         NA_character_)) %>% 
+  View()
+```
+
+
+
+```{r, echo=FALSE}
+covid_cases_tidy %>% 
+  filter(country.region %in% c("US", "Italy", "Spain", "United Kingdom", "Canada", "Germany", "France")) %>%
   group_by(country.region, date) %>%
   summarise(cases = sum(cases)) %>% 
   mutate(daily_cases = c(cases[1], diff(cases))) %>%
@@ -221,4 +240,65 @@ covid_cases_tidy %>%
 
 ```
 
+
+
+# Goals for the next Graph
+
+So, you've just made a some plots using my commands.Now let's spend a couple minutes using the `labs()` function to make nicer labels and headings for some of the plots. Let's start with the plot below. You can reference previous plots to use the command and run the chunk to see how each label works. We will use some fancier labels next week to manipulate a plot.
+
+```{r, echo=FALSE, eval= TRUE}
+covid_cases_tidy %>% # start with the tidy data
+  group_by(country.region) %>% # Make the data look at each country as one "group"
+  summarise(cases = max(cases)) %>%  #Knowing that each country's max value is the total number of cases
+  arrange(desc(cases)) %>% # arrange the countries by descending cases
+  head(20) %>%  # pipe the 20 x 2 data into ggplot
+  mutate(country.region = fct_reorder(country.region, cases)) %>% # Reorder the plot by cases
+ # mutate(country.region = fct_lump(country.region, n = 10, w = cases)) %>% 
+  ggplot(aes(x = country.region, y = cases))+ # input data and aesthetic mapping the variables into a plot
+  geom_col(aes(fill = country.region))+ # note the use of the + signs to add layers to plots
+  coord_flip()+ # de-clutter the names
+  scale_fill_discrete()+
+  scale_y_continuous(labels = scales::comma_format())+ #log10 scale to show reasonable scale
+  theme(legend.position = "none")+ # removes legend, countries are on the side
+  labs(x = "Country",
+       y = "Number of Cases")
+```
+
+
+
+For the next plot, take some to inspect the data to see what's available using the viewer in the top left plane by clicking on the object. You'll notice that not every country has provinces or states listed, so you'll need to try and select a few countries that you're interested in. 
+
+You can then modify the commands in the plot below: 
+
+```{r, echo=FALSE}
+covid_cases_tidy %>% 
+  filter(country.region %in% c("US", "Italy", "Spain", "United Kingdom", "Canada", "Germany")) %>%
+  group_by(country.region, date) %>%
+  summarise(cases = sum(cases)) %>% 
+  mutate(daily_cases = c(cases[1], diff(cases))) %>%
+  filter(daily_cases >= 10) %>% 
+  mutate(days = 1:n()) %>% 
+  mutate(label = if_else(days == max(days), 
+                         country.region, 
+                         NA_character_)) %>%
+  ungroup() %>%
+  ggplot(aes(days, cases, colour = country.region))+
+  geom_line(size = .75)+
+ geom_text_repel(aes(label = label), 
+                  nudge_x = 1, 
+                  na.rm = TRUE)+
+  scale_y_log10(labels = scales::comma_format())+
+  scale_color_discrete(name = " ")+
+  theme(legend.position = "none")+
+  labs(title = " ", 
+       x = " ",
+       y = " ",
+       subtitle = "Data: Johns Hopkins CSSE",
+       caption = "Inspiration: John Burn Murdoch, FT\nEric Green, Duke")
+```
+
+
+For future data plots, you can go to the GitHub repository for more data. You can take a look and explore the deaths from COVID-19 here: [https://github.com/CSSEGISandData/COVID-19](https://github.com/CSSEGISandData/COVID-19).
+
+This link will take you to the [COVID-19 Time Series Data](https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series) for cases in the US and globally. Refer to the code at the top of the page to read data into R. I'll do this with you in our live session.  
 

@@ -163,7 +163,7 @@ The plots below replicate many of the features of the financial times plot. Usin
 
 ```{r, echo=FALSE}
 covid_cases_tidy %>% 
-  filter(country_region %in% c("US", "Italy", "Spain", "United Kingdom", "Canada", "Germany")) %>%
+  filter(country_region %in% c("US", "Italy", "Spain", "United Kingdom", "Canada", "Germany", "Sweden")) %>%
   group_by(country_region, date) %>%
   summarise(cases = sum(cases)) %>% 
   mutate(daily_cases = c(cases[1], diff(cases))) %>%
