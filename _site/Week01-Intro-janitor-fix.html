@@ -287,6 +287,9 @@ $(document).ready(function () {
     </li>
   </ul>
 </li>
+<li>
+  <a href="Week02-Saving-a-Plot.html">Week 2</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         
@@ -371,83 +374,83 @@ covid_cases&lt;- covid_cases %&gt;%
 <tbody>
 <tr class="odd">
 <td align="left">US</td>
-<td align="right">526396</td>
+<td align="right">839675</td>
 </tr>
 <tr class="even">
 <td align="left">Spain</td>
-<td align="right">163027</td>
+<td align="right">208389</td>
 </tr>
 <tr class="odd">
 <td align="left">Italy</td>
-<td align="right">152271</td>
+<td align="right">187327</td>
 </tr>
 <tr class="even">
 <td align="left">France</td>
-<td align="right">129654</td>
+<td align="right">158050</td>
 </tr>
 <tr class="odd">
 <td align="left">Germany</td>
-<td align="right">124908</td>
+<td align="right">150648</td>
 </tr>
 <tr class="even">
 <td align="left">United Kingdom</td>
-<td align="right">78991</td>
-</tr>
-<tr class="odd">
-<td align="left">Iran</td>
-<td align="right">70029</td>
-</tr>
-<tr class="even">
-<td align="left">China</td>
-<td align="right">67803</td>
+<td align="right">133495</td>
 </tr>
 <tr class="odd">
 <td align="left">Turkey</td>
-<td align="right">52167</td>
+<td align="right">98674</td>
 </tr>
 <tr class="even">
-<td align="left">Belgium</td>
-<td align="right">28018</td>
+<td align="left">Iran</td>
+<td align="right">85996</td>
 </tr>
 <tr class="odd">
-<td align="left">Switzerland</td>
-<td align="right">25107</td>
-</tr>
-<tr class="even">
-<td align="left">Netherlands</td>
-<td align="right">24413</td>
-</tr>
-<tr class="odd">
-<td align="left">Brazil</td>
-<td align="right">20727</td>
-</tr>
-<tr class="even">
-<td align="left">Portugal</td>
-<td align="right">15987</td>
-</tr>
-<tr class="odd">
-<td align="left">Austria</td>
-<td align="right">13806</td>
+<td align="left">China</td>
+<td align="right">68128</td>
 </tr>
 <tr class="even">
 <td align="left">Russia</td>
-<td align="right">13584</td>
+<td align="right">57999</td>
+</tr>
+<tr class="odd">
+<td align="left">Brazil</td>
+<td align="right">45757</td>
+</tr>
+<tr class="even">
+<td align="left">Belgium</td>
+<td align="right">41889</td>
+</tr>
+<tr class="odd">
+<td align="left">Netherlands</td>
+<td align="right">34842</td>
+</tr>
+<tr class="even">
+<td align="left">Switzerland</td>
+<td align="right">28268</td>
+</tr>
+<tr class="odd">
+<td align="left">Portugal</td>
+<td align="right">21982</td>
+</tr>
+<tr class="even">
+<td align="left">India</td>
+<td align="right">21370</td>
 </tr>
 <tr class="odd">
 <td align="left">Canada</td>
-<td align="right">12292</td>
+<td align="right">20965</td>
 </tr>
 <tr class="even">
-<td align="left">Israel</td>
-<td align="right">10743</td>
+<td align="left">Peru</td>
+<td align="right">19250</td>
 </tr>
 <tr class="odd">
-<td align="left">Korea, South</td>
-<td align="right">10480</td>
+<td align="left">Ireland</td>
+<td align="right">16671</td>
 </tr>
 <tr class="even">
 <td align="left">Sweden</td>
-<td align="right">10151</td>
+<td align="right">16004</td>
 </tr>
 </tbody>
 </table>
@@ -456,7 +459,7 @@ covid_cases&lt;- covid_cases %&gt;%
 <div id="create-a-summary-plot" class="section level3">
 <h3>Create a Summary Plot</h3>
 <p>Now that we have this data output, let’s make our first plot of the data. This will be a bar graph that will show the twenty most-affected countries in the world. It will essentially take the output of the last code and use it to make a plot.</p>
-<p>Some things to keep in mind. The output is a <code>tibble</code> which is a type of data frame that R likes work with. The data was initially 21384 by 6 tibble and it’s been converted into a 20 by 2 tibble.</p>
+<p>Some things to keep in mind. The output is a <code>tibble</code> which is a type of data frame that R likes work with. The data was initially 24288 by 6 tibble and it’s been converted into a 20 by 2 tibble.</p>
 <p>The following plot, take the data from the chart and creates a plot to show the countries that are most affected by the COVID-19 outbreak.</p>
 <p><img src="Week01-Intro-janitor-fix_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 </div>
@@ -470,9 +473,30 @@ covid_cases&lt;- covid_cases %&gt;%
 <div id="covid-19-plots" class="section level3">
 <h3>COVID-19 Plots</h3>
 <p>The plots below replicate many of the features of the financial times plot. Using RStudio.Cloud and by following along, you will be able to replicate the main features of the plot.</p>
-<p><img src="Week01-Intro-janitor-fix_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<pre class="r"><code>covid_cases_tidy %&gt;% 
+  filter(country.region %in% c(&quot;US&quot;, &quot;Italy&quot;, &quot;Spain&quot;, &quot;United Kingdom&quot;, &quot;Canada&quot;, &quot;Germany&quot;)) %&gt;%
+  group_by(country.region, date) %&gt;%
+  summarise(cases = sum(cases)) %&gt;% 
+  mutate(daily_cases = c(cases[1], diff(cases))) %&gt;%
+  filter(daily_cases &gt;= 10) %&gt;% 
+  mutate(days = 1:n()) %&gt;% 
+  mutate(label = if_else(days == max(days), 
+                         country.region, 
+                         NA_character_)) %&gt;% 
+  View()</code></pre>
 <p><img src="Week01-Intro-janitor-fix_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p><img src="Week01-Intro-janitor-fix_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 </div>
+</div>
+<div id="goals-for-the-next-graph" class="section level1">
+<h1>Goals for the next Graph</h1>
+<p>So, you’ve just made a some plots using my commands.Now let’s spend a couple minutes using the <code>labs()</code> function to make nicer labels and headings for some of the plots. Let’s start with the plot below. You can reference previous plots to use the command and run the chunk to see how each label works. We will use some fancier labels next week to manipulate a plot.</p>
+<p><img src="Week01-Intro-janitor-fix_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p>For the next plot, take some to inspect the data to see what’s available using the viewer in the top left plane by clicking on the object. You’ll notice that not every country has provinces or states listed, so you’ll need to try and select a few countries that you’re interested in.</p>
+<p>You can then modify the commands in the plot below:</p>
+<p><img src="Week01-Intro-janitor-fix_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p>For future data plots, you can go to the GitHub repository for more data. You can take a look and explore the deaths from COVID-19 here: <a href="https://github.com/CSSEGISandData/COVID-19">https://github.com/CSSEGISandData/COVID-19</a>.</p>
+<p>This link will take you to the <a href="https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series">COVID-19 Time Series Data</a> for cases in the US and globally. Refer to the code at the top of the page to read data into R. I’ll do this with you in our live session.</p>
 </div>
 
 

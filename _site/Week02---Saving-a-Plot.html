@@ -12,7 +12,7 @@
 <meta name="author" content="Chris Papalia" />
 
 
-<title>Week01-Intro</title>
+<title>Week 02 - Saving Plots</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -302,181 +302,248 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Week01-Intro</h1>
+<h1 class="title toc-ignore">Week 02 - Saving Plots</h1>
 <h4 class="author">Chris Papalia</h4>
-<h4 class="date">4/9/2020</h4>
+<h4 class="date">4/23/2020</h4>
 
 </div>
 
 
-<p>This document will walk you through how to create a plot similar to the one that you see below. It will use the data from Johns Hopkins University to loosely replicate a plot that shows the outbreak of COVID-19 for some countries, and for four provinces in Canada.</p>
-<p>Here is the plot that we will try and replicate:</p>
-<div class="figure">
-<img src="Fin_times_plot.png" alt="Financial Times Plot of Deaths on a Log Scale" />
-<p class="caption">Financial Times Plot of Deaths on a Log Scale</p>
-</div>
-<p>Then, in Week 2, you will be able to create your own plots to show the outbreak in an area that you’re interested in.</p>
-<div id="creating-a-plot-in-r" class="section level1">
-<h1>Creating a Plot in R</h1>
+<p>Today we will create a plot using the deaths data, and then save the plot as a .png file to upload to Edsby. Hopefully things went reasonably well last week with adding to the plots. If you added more, or changed, counties, you now have a plot of your own.</p>
+<p>Let’s save a plot:</p>
+<div id="saving-a-plot-in-r" class="section level1">
+<h1>Saving a Plot in R</h1>
 <div id="load-libraries-and-set-a-theme" class="section level3">
 <h3>1. Load Libraries and Set a Theme</h3>
+<p>We will need to use a new package today, so you’ll need to install the tibbletime package to allow us to use a folling mean function.</p>
+<p><strong>In the console, please type: install.packages(“tibbletime”) and run the command.</strong></p>
 <p>In order to work with R, you’ll need access to many different packages that allow the user to use different tools. Each of these packages below has a function. Most importantly, the tidyverse package allows the user to import, tidy, transform, and visualize data using commands that are relatively intuitive.</p>
 <p>The other packages each perform some function in this module.</p>
 <pre class="r"><code>library(tidyverse)
 library(janitor)
 library(lubridate)
-library(tidymodels)
 library(ggrepel)
-library(knitr)</code></pre>
+library(knitr)
+library(tibbletime)</code></pre>
 <p>I have set the theme to light to avoid the gray background in graphics.</p>
 <pre class="r"><code>theme_set(theme_light())</code></pre>
 </div>
-<div id="load-the-data" class="section level3">
-<h3>2. Load the Data</h3>
+<div id="load-the-deaths-data-in-r" class="section level3">
+<h3>2. Load the Deaths data in R</h3>
 <p>We will load the data using the data source of the following website <a href="https://coronavirus.jhu.edu/map.html">Johns Hopkins CSSE Map</a></p>
 <p>In order to get the data, we will use a link to the Johns Hopkins CSSE data in GitHub. The following command will load the data for us using the <code>read_csv</code> command.</p>
-<pre class="r"><code>covid_cases &lt;- read_csv(&quot;https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv&quot;)</code></pre>
-<p>Once you run this line of code, you should see the <code>covid_cases</code> object in the Environment pane. If you click the object in the environment pane, you can view the data in a tabel format in the <em>Source</em> pane in the upper left.</p>
-</div>
-<div id="tidy-and-transform-the-data-to-make-a-plot" class="section level3">
-<h3>3. Tidy and Transform the Data to Make a Plot</h3>
-<div id="a.-clean-column-names" class="section level4">
-<h4>A. Clean column Names</h4>
-<p>You’ll notice that when we view the file, it is not <em>tidy</em> data because each day is listed as a column rather than as an observation. We can inspect the column names with the command below.</p>
-<pre class="r"><code>colnames(covid_cases)[5:ncol(covid_cases)]</code></pre>
-<p>It’s also important to see that the dates are not in a nice format. We would pefer to use <em>YYYY-MM-DD</em> as our date input, so we will use the following command to rename the columns with the dates formatted correctly.</p>
-<pre class="r"><code>old_names &lt;- colnames(covid_cases)[5:ncol(covid_cases)]
-new_names &lt;- parse_date(colnames(covid_cases)[5:ncol(covid_cases)], &quot;%m/%d/%y&quot;)
+<pre class="r"><code>covid_deaths &lt;- read_csv(&quot;https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv&quot;)</code></pre>
+<p>Once you run this line of code, you should see the <code>covid_deaths</code> object in the Environment pane. If you click the object in the environment pane, you can view the data in a tabel format in the <em>Source</em> pane in the upper left.</p>
+<div id="a.-clean-the-names" class="section level4">
+<h4>A. Clean the names</h4>
+<p>Use the viewer to inspect the data and you’ll see we have the same issue that we had last time, so we’ll use the same process as last time to convert the data into a usuable (<strong>tidy</strong>) format. Remember, tidy data has one row that represents a single observation. Each row will represent a single day’s number of deaths in a single country.</p>
+<p>We would pefer to use <em>YYYY-MM-DD</em> as our date input, so we will use the following command to rename the columns with the dates formatted correctly.</p>
+<pre class="r"><code>old_names_deaths &lt;- colnames(covid_deaths)[5:ncol(covid_deaths)]
+new_names_deaths &lt;- parse_date(colnames(covid_deaths)[5:ncol(covid_deaths)], &quot;%m/%d/%y&quot;)
 
-covid_cases&lt;- covid_cases %&gt;% 
-  rename_at(vars(old_names), function(x) new_names)</code></pre>
-<p>Then we will reshape the data into a long <em>tidy</em> format using the <code>pivot_longer()</code> command. Now for each county observation (row), we will move the dates under the country. We will call this new dataset <code>covid_cases_tidy</code>. You can inspect it in the environment to see how it looks different from the <code>covid_cases</code> that we input from GitHub.</p>
-<pre class="r"><code>covid_cases_tidy &lt;- covid_cases %&gt;% 
+covid_deaths&lt;- covid_deaths %&gt;% 
+  rename_at(vars(old_names_deaths), function(x) new_names_deaths)</code></pre>
+</div>
+<div id="b.-re-shape-the-data" class="section level4">
+<h4>B. Re-shape the Data</h4>
+<p>Then we will reshape the data into a long <em>tidy</em> format using the <code>pivot_longer()</code> command. Now for each country observation (row), we will move the dates under the country. We will call this new dataset <code>covid_deaths_tidy</code>. You can inspect it in the environment to see how it looks different from the <code>covid_deaths</code> that we input from GitHub.</p>
+<p>We’ll also assume the <code>janitor</code> package is still broken in the</p>
+<pre class="r"><code>covid_deaths_tidy &lt;- covid_deaths %&gt;% 
   pivot_longer(
     cols = -`Province/State`:-Long,  
     names_to = &quot;date&quot;, 
-    values_to = &quot;cases&quot;
+    values_to = &quot;deaths&quot;
   ) %&gt;% as_tibble() %&gt;% 
   mutate(date = as.Date(date)) %&gt;% 
-  clean_names()</code></pre>
+  set_names(tolower(make.names(names(.)))) # The janitor package was broken in the cloud, here is the fix</code></pre>
 </div>
-<div id="b.-transform-and-summarise-the-data-using-the-pipe-operator" class="section level4">
-<h4>B. Transform and Summarise the Data Using the Pipe Operator</h4>
-<p>For the particular plot we’re trying to make, we only want to use the data for the Provinces in Canada. So we need to filter the data to look only at what we’re interested in. Once again, we can see the data by pressing on the <code>covid_cases_tidy</code> object in the environment pane in the upper right.</p>
-<p>Let’s look at the data of the top 10 most affected countries in the world and find that data using some commands that we can find in the <code>dplyr</code> package, which is part of the tidyverse. Since we know the data is tidy, that being each row represents a country’s day of total cases, we can use use some statistical analysis to pull some information out of the data</p>
-<p>Let’s see what are most affected countries are in the world are, and how many cases they have. We will use the pipe operator <code>%&gt;%</code> to use the previous output at the input in the next line of code.</p>
+<div id="c.-rank-by-deaths" class="section level4">
+<h4>C. Rank by deaths</h4>
 <table>
 <thead>
 <tr class="header">
-<th align="left">country_region</th>
-<th align="right">cases</th>
+<th align="left">Country</th>
+<th align="right">deaths</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left">US</td>
-<td align="right">839675</td>
+<td align="right">46583</td>
 </tr>
 <tr class="even">
-<td align="left">Spain</td>
-<td align="right">208389</td>
-</tr>
-<tr class="odd">
 <td align="left">Italy</td>
-<td align="right">187327</td>
-</tr>
-<tr class="even">
-<td align="left">France</td>
-<td align="right">158050</td>
+<td align="right">25085</td>
 </tr>
 <tr class="odd">
-<td align="left">Germany</td>
-<td align="right">150648</td>
+<td align="left">Spain</td>
+<td align="right">21717</td>
 </tr>
 <tr class="even">
 <td align="left">United Kingdom</td>
-<td align="right">133495</td>
+<td align="right">18100</td>
 </tr>
 <tr class="odd">
-<td align="left">Turkey</td>
-<td align="right">98674</td>
+<td align="left">Belgium</td>
+<td align="right">6262</td>
 </tr>
 <tr class="even">
 <td align="left">Iran</td>
-<td align="right">85996</td>
+<td align="right">5391</td>
 </tr>
 <tr class="odd">
+<td align="left">Germany</td>
+<td align="right">5279</td>
+</tr>
+<tr class="even">
 <td align="left">China</td>
-<td align="right">68128</td>
-</tr>
-<tr class="even">
-<td align="left">Russia</td>
-<td align="right">57999</td>
-</tr>
-<tr class="odd">
-<td align="left">Brazil</td>
-<td align="right">45757</td>
-</tr>
-<tr class="even">
-<td align="left">Belgium</td>
-<td align="right">41889</td>
+<td align="right">4512</td>
 </tr>
 <tr class="odd">
 <td align="left">Netherlands</td>
-<td align="right">34842</td>
+<td align="right">4054</td>
 </tr>
 <tr class="even">
-<td align="left">Switzerland</td>
-<td align="right">28268</td>
+<td align="left">Brazil</td>
+<td align="right">2906</td>
 </tr>
 <tr class="odd">
-<td align="left">Portugal</td>
-<td align="right">21982</td>
-</tr>
-<tr class="even">
-<td align="left">India</td>
-<td align="right">21370</td>
-</tr>
-<tr class="odd">
-<td align="left">Canada</td>
-<td align="right">20965</td>
-</tr>
-<tr class="even">
-<td align="left">Peru</td>
-<td align="right">19250</td>
-</tr>
-<tr class="odd">
-<td align="left">Ireland</td>
-<td align="right">16671</td>
+<td align="left">Turkey</td>
+<td align="right">2376</td>
 </tr>
 <tr class="even">
 <td align="left">Sweden</td>
-<td align="right">16004</td>
+<td align="right">1937</td>
+</tr>
+<tr class="odd">
+<td align="left">Switzerland</td>
+<td align="right">1509</td>
+</tr>
+<tr class="even">
+<td align="left">Canada</td>
+<td align="right">1134</td>
+</tr>
+<tr class="odd">
+<td align="left">Mexico</td>
+<td align="right">857</td>
+</tr>
+<tr class="even">
+<td align="left">Portugal</td>
+<td align="right">785</td>
+</tr>
+<tr class="odd">
+<td align="left">Ireland</td>
+<td align="right">769</td>
+</tr>
+<tr class="even">
+<td align="left">India</td>
+<td align="right">681</td>
+</tr>
+<tr class="odd">
+<td align="left">Indonesia</td>
+<td align="right">635</td>
+</tr>
+<tr class="even">
+<td align="left">Ecuador</td>
+<td align="right">537</td>
 </tr>
 </tbody>
 </table>
+<p>To create a plot that has the names of the countries with the most deaths, we will assign the names to a list called <code>top_20</code>, where we will call on it to produce a plot.</p>
 </div>
 </div>
-<div id="create-a-summary-plot" class="section level3">
-<h3>Create a Summary Plot</h3>
-<p>Now that we have this data output, let’s make our first plot of the data. This will be a bar graph that will show the twenty most-affected countries in the world. It will essentially take the output of the last code and use it to make a plot.</p>
-<p>Some things to keep in mind. The output is a <code>tibble</code> which is a type of data frame that R likes work with. The data was initially 24288 by 6 tibble and it’s been converted into a 20 by 2 tibble.</p>
-<p>The following plot, take the data from the chart and creates a plot to show the countries that are most affected by the COVID-19 outbreak.</p>
-<p><img src="Week01-Intro_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<div id="creating-a-plot" class="section level2">
+<h2>Creating a Plot</h2>
 </div>
-<div id="covid-19-outbreak-in-a-plot" class="section level3">
-<h3>COVID-19 Outbreak In A Plot</h3>
-<p>Now that we have shown the countries most affected by COVID-19 in a summary plot, let’s look at how some of this data in a time-series plot. In general, the growth of COVID-19 is an exponetial growth curve. For instance, we can look at some of the most affected countries in the world and see how their growth curves look. Let’s choose, the US, Spain, Italy, and the UK.</p>
-<p>We can view this data using the filter command, and then plotting it. One of the nice features in R, is that we are still using the basic dataset that we started with rather than needing to change it a bunch and create new sheets like we might need to in Excel.</p>
-<p><img src="Week01-Intro_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
-<p>In this plot, we can see the different growth rates of the countries, but it’s difficult to determine where on the growth curve these countries are, so it’s helpful to make a plot by the number of days since a certain number of cases.</p>
 </div>
-<div id="covid-19-plots" class="section level3">
-<h3>COVID-19 Plots</h3>
-<p>The plots below replicate many of the features of the financial times plot. Using RStudio.Cloud and by following along, you will be able to replicate the main features of the plot.</p>
-<p><img src="Week01-Intro_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
-<p><img src="Week01-Intro_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<div id="a.-create-a-top-20-list" class="section level1">
+<h1>A. Create a Top 20 List</h1>
+<pre class="r"><code>top_15 &lt;- 
+covid_deaths_tidy %&gt;%
+  group_by(country.region) %&gt;% 
+  summarise(deaths = max(deaths)) %&gt;%
+  filter(country.region != &quot;France&quot;) %&gt;% 
+  filter(country.region != &quot;China&quot;) %&gt;% 
+  arrange(desc(deaths)) %&gt;% 
+  slice(1:15) </code></pre>
 </div>
+<div id="b.-creating-a-daily_deaths-count" class="section level1">
+<h1>B. Creating a daily_deaths count</h1>
+<pre class="r"><code>covid_daily_deaths &lt;- 
+covid_deaths_tidy %&gt;%
+  filter(country.region != &quot;France&quot;) %&gt;% 
+  group_by(country.region, date) %&gt;%
+  summarise(deaths = max(deaths)) %&gt;% 
+  mutate(daily_deaths = c(deaths[1], diff(deaths))) %&gt;%
+  filter(daily_deaths &gt;= 10) %&gt;% 
+  mutate(days = 1:n()) %&gt;% 
+  mutate(label = if_else(days == max(days), 
+                         country.region, 
+                         NA_character_)) %&gt;%
+  ungroup() </code></pre>
+</div>
+<div id="c.-creating-a-rolling-average-for-the-daily-deaths-to-smooth-out-spikes" class="section level1">
+<h1>C. Creating a “Rolling Average” for the daily deaths to smooth out spikes</h1>
+<p>Remember that you must have installed the <code>tibbletime</code> package and also loaded it in the library.</p>
+<pre class="r"><code>roll_mean_5 &lt;- rollify(mean, window = 5) # Create a 5-day rolling average
+
+
+covid_daily_deaths %&gt;% 
+  filter(country.region %in% top_15$country.region) %&gt;%
+  group_by(country.region) %&gt;% 
+  mutate(deaths_avg = roll_mean_5(daily_deaths)) %&gt;% 
+  ungroup() %&gt;% 
+  filter(!is.na(deaths_avg)) %&gt;% 
+  ggplot(aes(days, deaths_avg, colour = country.region))+
+  geom_line(size = .75)+
+  geom_text_repel(aes(label = label), 
+                  nudge_x = 1, 
+                  na.rm = TRUE)+
+  scale_y_log10(labels = scales::comma_format())+
+  scale_color_discrete(name = &quot;Country&quot;)+
+  theme(legend.position = &quot;none&quot;)+
+  labs(title = &quot;Have we Reached the Peak of COVID-19?&quot;, 
+       x = &quot;Days Since 10 Daily Deaths&quot;,
+       y = &quot;Number of Deaths Each Day&quot;,
+       subtitle = &quot;5-Day Moving Average of Deaths\nData: Johns Hopkins CSSE&quot;,
+       caption = &quot;Inspiration: John Burn Murdoch, FT\nEric Green, Duke&quot;)</code></pre>
+<p><img src="Week02---Saving-a-Plot_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+</div>
+<div id="save-your-plot" class="section level1">
+<h1>Save your Plot</h1>
+<p>In order to save your plot, you have two choices. Firstly, you can save it using the viewer pane in the lower right.</p>
+<div class="figure">
+<img src="plot_pane.png" alt="See the Plots pane “Export” button" />
+<p class="caption">See the Plots pane “Export” button</p>
+</div>
+<p>Once you click the <em>Export</em> button, you can change a variety of options about the plots.</p>
+<div class="figure">
+<img src="saving_plot_using_plot_pane.png" alt="Choose aspect ratios and file names and types" />
+<p class="caption">Choose aspect ratios and file names and types</p>
+</div>
+<p>Alternatively, you can choose to save your plot using code by assigning your plot to an object, and then using the <code>ggsave()</code> command to save it. See below:</p>
+<pre class="r"><code>plot_1 &lt;-
+covid_daily_deaths %&gt;% 
+  filter(country.region %in% top_15$country.region) %&gt;%
+  group_by(country.region) %&gt;% 
+  mutate(deaths_avg = roll_mean_5(daily_deaths)) %&gt;% 
+  ungroup() %&gt;% 
+  filter(!is.na(deaths_avg)) %&gt;% 
+  ggplot(aes(days, deaths_avg, colour = country.region))+
+  geom_line(size = .75)+
+  geom_text_repel(aes(label = label), 
+                  nudge_x = 1, 
+                  na.rm = TRUE)+
+  scale_y_log10(labels = scales::comma_format())+
+  scale_color_discrete(name = &quot;Country&quot;)+
+  theme(legend.position = &quot;none&quot;)+
+  labs(title = &quot;Have we Reached the Peak of COVID-19?&quot;, 
+       x = &quot;Days Since 10 Daily Deaths Recorded&quot;,
+       y = &quot;Number of Deaths Each Day&quot;,
+       subtitle = &quot;5-Day Moving Average of Deaths\nData: Johns Hopkins CSSE&quot;,
+       caption = &quot;Inspiration: John Burn Murdoch, FT\nEric Green, Duke&quot;)
+
+ggsave(&quot;plot_save_example.png&quot;, plot = plot_1, height = 5, width = 7)</code></pre>
 </div>
 
 
