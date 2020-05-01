@@ -10,6 +10,8 @@ navbar:
       href: Week01-Intro-janitor-fix.html
   - text: Week 2
     href: Week02-Saving-a-Plot.html
+  - text: Week 3
+    href: Week03-apple-mobility-tracker.html
 output:
   html_document:
     theme: flatly
