@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Chris Papalia" />
+
+
+<title>Week 03 - Apple Maps Data</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h2 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h3 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h4 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h5 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h6 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">AC Plus - Spring 2020</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Week 1
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Week01-Intro.html">Week 1</a>
+    </li>
+    <li>
+      <a href="Week01-Intro-janitor-fix.html">Week 1 (Fix)</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="Week02-Saving-a-Plot.html">Week 2</a>
+</li>
+<li>
+  <a href="Week03-apple-mobility-tracker.html">Week 3</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Week 03 - Apple Maps Data</h1>
+<h4 class="author">Chris Papalia</h4>
+<h4 class="date">4/29/2020</h4>
+
+</div>
+
+
+<p>Since quarantines became mandatory in many counties, we have been affected many different ways. One of these ways is that we are travelling much less often that we have before. And, if we are travelling, we going to familiar places. Let’s see whether the data reveals any patterns in regards to the way we search google maps on our phones.</p>
+<p>This is a message from Apple:</p>
+<p><strong>Mobility Trends Reports</strong></p>
+<p><em>Learn about COVID‑19 mobility trends in countries/regions and cities. Reports are published daily and reflect requests for directions in Apple Maps. Privacy is one of our core values, so Maps doesn’t associate your data with your Apple ID, and Apple doesn’t keep a history of where you’ve been.</em></p>
+<p>The data is accessible at the following website: <a href="https://www.apple.com/covid19/mobility">https://www.apple.com/covid19/mobility</a>.</p>
+<div id="load-the-data-from-apple" class="section level2">
+<h2>Load the data from Apple</h2>
+<p>Let’s load the apple data into R environment by using RStudio’s interface. For the purpose of working with the data in this Rmarkdown document, we will use the code strokes to load the data and assign it the name, “apple”.</p>
+<pre class="r"><code>apple &lt;- read_csv(&quot;apple_data_2020-04-27.csv&quot;)</code></pre>
+<p>We can look through the data and get a sense of what it looks like using the <code>glimpse()</code> command, or use the data viewer to inspect it.</p>
+<pre class="r"><code>glimpse(apple)</code></pre>
+</div>
+<div id="tidy-the-data-by-using-pivot_longer" class="section level2">
+<h2>Tidy the data by using pivot_longer</h2>
+<p>Notice, that we have wide data that isn’t tidy, so we’ll need to do some tidying. Also, we will rename the dataset, add a new variable called change that measures the percent relative to the date on January 13, 2020.</p>
+<pre class="r"><code>apple_long &lt;- 
+apple %&gt;% 
+  pivot_longer(cols = 5:ncol(apple), 
+               names_to = &quot;date&quot;, 
+               values_to = &quot;index&quot;
+               ) %&gt;% 
+  mutate(date = as.Date(date),
+         change = (index - 100)) %&gt;% 
+  select(-alternative_name)</code></pre>
+</div>
+<div id="summarize-the-data" class="section level2">
+<h2>Summarize the Data</h2>
+<p>Let’s look at some summaries:</p>
+<pre class="r"><code> apple_long %&gt;%
+  # count observations by geo_type and transportation_type
+    group_by(geo_type, transportation_type) %&gt;%
+    count() %&gt;%
+  # regroup to get % by geo_type
+    group_by(geo_type) %&gt;%
+    mutate(geo_prop = (n/sum(n)*100)) %&gt;%
+  # regroup to get % by transportation_type
+    group_by(transportation_type) %&gt;%
+    mutate(transport_prop = (n/sum(n)*100)) %&gt;%
+  # ungroup to get overall %
+    ungroup() %&gt;%
+    mutate(prop = (n/sum(n)*100))</code></pre>
+<pre><code>## # A tibble: 7 x 6
+##   geo_type       transportation_type     n geo_prop transport_prop  prop
+##   &lt;chr&gt;          &lt;chr&gt;               &lt;int&gt;    &lt;dbl&gt;          &lt;dbl&gt; &lt;dbl&gt;
+## 1 city           driving             15794     35.6          18.6  12.9 
+## 2 city           transit             12932     29.2          81.9  10.5 
+## 3 city           walking             15582     35.2          70    12.7 
+## 4 country/region driving              6678     41.2           7.88  5.44
+## 5 country/region transit              2862     17.6          18.1   2.33
+## 6 country/region walking              6678     41.2          30     5.44
+## 7 sub-region     driving             62222    100            73.5  50.7</code></pre>
+</div>
+<div id="lets-make-a-simple-boxplot" class="section level2">
+<h2>Let’s Make a Simple Boxplot</h2>
+<p>In this plot, let’s take a look at the number of routing requests apple maps grouped by different transpotation types. This box plot shows the general trend for each request relative to January 13, 2020. Notice that the box plot doesn’t reveal what date, it merely shows the distribution of the <code>change</code> variable.</p>
+<pre class="r"><code> apple_long %&gt;%
+  filter(region %in% c(&quot;Toronto&quot;, &quot;Ottawa&quot;, &quot;Montreal&quot;, &quot;Vancouver&quot;)) %&gt;% 
+    ggplot(aes(x=transportation_type,
+                  y=change, 
+                  fill = transportation_type)) + 
+    geom_boxplot() +
+    facet_wrap(~ region)+
+  theme(legend.position = &quot;none&quot;)+
+  labs(x = &quot;Transportation Type&quot;, 
+       y = &quot;Percent Chage&quot;)</code></pre>
+<p><img src="Week03-apple-mobility-tracker_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+</div>
+<div id="lets-look-at-more-canadian-cities" class="section level2">
+<h2>Let’s Look at more Canadian Cities</h2>
+<p>In order to examine more Canadian cities, we can use another dataset that contains all these cities. We’ll also get to have a look at a new package (the <code>maps</code> package) and filter the world.cities data by country and population.</p>
+<p>Have a quick look at the variables contained in the world.cities data, and see that there are 43, 645 observations in this world.cities data.</p>
+<pre class="r"><code>world.cities %&gt;% 
+glimpse()</code></pre>
+<pre><code>## Observations: 43,645
+## Variables: 6
+## $ name        &lt;chr&gt; &quot;&#39;Abasan al-Jadidah&quot;, &quot;&#39;Abasan al-Kabirah&quot;, &quot;&#39;Abdul Hak...
+## $ country.etc &lt;chr&gt; &quot;Palestine&quot;, &quot;Palestine&quot;, &quot;Pakistan&quot;, &quot;Kuwait&quot;, &quot;Palest...
+## $ pop         &lt;int&gt; 5629, 18999, 47788, 21817, 2456, 3434, 9198, 5492, 2270...
+## $ lat         &lt;dbl&gt; 31.31, 31.32, 30.55, 29.36, 32.03, 32.03, 9.77, 2.75, 3...
+## $ long        &lt;dbl&gt; 34.34, 34.35, 72.11, 47.98, 35.07, 35.20, 44.65, 46.30,...
+## $ capital     &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0...</code></pre>
+<p>In order to use the Canadian cities list with the Apple data, we’ll need to to create a list of major Canadian cities from the <code>world.cities</code> dataset in the <code>maps</code> package. Once we have this list, we’ll use it to join to the apple_long data using an <code>inner_join</code> function.</p>
+<pre class="r"><code>can_pop_cities &lt;- world.cities %&gt;% 
+  filter(country.etc == &quot;Canada&quot;) %&gt;% 
+  filter(pop &gt; 100000)</code></pre>
+<p>Performing an <code>inner_join</code> matches the observations in one dataset to those in another dataset and filters out those that do not match. We are setting the city names in the <code>can_pop_cities</code> data (the variable is <strong>name</strong>) and the region variable in the <code>apple_long</code> data to match. This will give us a new dataset that only includes data for the cities that match. Then, we will assigned the new joined data as an object called <code>plot_data</code>.</p>
+<pre class="r"><code>plot_data &lt;- apple_long %&gt;% 
+  inner_join(select(can_pop_cities, name, pop), 
+             by= c(&quot;region&quot; = &quot;name&quot;)) %&gt;% 
+  filter(transportation_type == &quot;driving&quot;) %&gt;% 
+  mutate(positive = change&gt;=0) %&gt;% 
+  select(geo_type, region, transportation_type, date, change, pop, positive)</code></pre>
+<p>Note that we only need a few of the variables, so we are using the <code>select()</code> command to keep variables we’re interested in for our plot.</p>
+</div>
+<div id="make-the-plot" class="section level2">
+<h2>Make the Plot</h2>
+<pre class="r"><code>plot_data %&gt;%
+  mutate(region = glue::glue(&quot;{region} (pop = {pop})&quot;)) %&gt;% 
+  ggplot(aes(x = date, y = change, fill = positive, colour = positive))+
+  geom_col()+
+  facet_wrap(~region, ncol = 5)+
+  geom_vline(xintercept = ymd(&quot;2020-03-15&quot;), linetype = &quot;dashed&quot;)+
+  geom_hline(yintercept=0, color=&quot;#5c5b57&quot;, size=1.25) +
+      labs(title=&quot;Weekday Mobility Trends (Driving) in Canada&quot;,
+           subtitle = &quot;Percent change in routing requests from January 13, 2020.&quot;,
+           caption = &quot;Data: Apple, https://www.apple.com/covid19/mobility&quot;,
+           x=&quot;&quot;,
+           y=&quot;&quot;) +
+  theme_dark() +
+  theme(legend.position = &quot;none&quot;, strip.text = element_text(size = 10, face = &quot;bold&quot;))</code></pre>
+<p><img src="Week03-apple-mobility-tracker_files/figure-html/unnamed-chunk-10-1.png" width="960" /></p>
+</div>
+<div id="replicate-a-plot" class="section level2">
+<h2>Replicate a Plot</h2>
+<p>Let’s replicate the plot that is shown on Apple webpage data. The website is <a href="https://www.apple.com/covid19/mobility">https://www.apple.com/covid19/mobility</a>.</p>
+<pre class="r"><code>apple_long %&gt;%
+    filter(region %in% c(&quot;Canada&quot;, &quot;Germany&quot;, &quot;United States&quot;, &quot;Italy&quot;)) %&gt;% 
+    filter(transportation_type == &quot;transit&quot;) %&gt;% 
+  # relabel USA
+    mutate(region = ifelse(region==&quot;United States&quot;, &quot;USA&quot;, region)) %&gt;%
+  # a trick to label just the ends of the lines
+    mutate(label = ifelse(date==max(date), region, &quot;&quot;)) %&gt;%
+  # plot
+    ggplot(aes(x=date, y=change, group=region, color=region)) +
+      geom_line(size = 1) +
+    
+    # time to fiddle to get it to look just right
+      scale_y_continuous(breaks = c(-60, -20, 20, 60),
+                         limits = c(-100, 80)) +
+      scale_color_manual(values=c(&quot;red&quot;, &quot;blue&quot;,
+                                 &quot;green&quot;, &quot;purple&quot;)) +
+      guides(color = FALSE) +
+      ggrepel::geom_text_repel(aes(label = label),
+                               nudge_x = 3,
+                               na.rm = TRUE) +
+      labs(title=&quot;Weekday Mobility Trends (Transit)&quot;,
+           subtitle = &quot;Percent change in routing requests from January 13, 2020.&quot;,
+           caption = &quot;Data: Apple, https://www.apple.com/covid19/mobility&quot;,
+           x=&quot;&quot;,
+           y=&quot;&quot;) +
+      geom_hline(yintercept=0, color=&quot;#5c5b57&quot;, size=.4) +
+      theme_minimal() +
+      theme(plot.title.position = &quot;plot&quot;,
+            plot.title = element_text(face=&quot;bold&quot;, size=20, 
+                                      color=&quot;#5c5b57&quot;),
+            plot.subtitle = element_text(size=13, color=&quot;#5c5b57&quot;),
+            plot.caption = element_text(size=9, color=&quot;#5c5b57&quot;),
+            panel.grid.major.x = element_blank(), 
+            panel.grid.minor.y = element_blank(),
+            panel.grid.minor.x = element_blank())</code></pre>
+<p><img src="Week03-apple-mobility-tracker_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p>It’s also important to keep in mind that Apple has a statement about their data tracking. It’s important to know that this data is not linked to specific users:</p>
+<p>About This Data The CSV file and charts on this site show a relative volume of directions requests per country/region or city compared to a baseline volume on January 13th, 2020.</p>
+<p>We define our day as midnight-to-midnight, Pacific time. Cities represent usage in greater metropolitan areas and are stably defined during this period. In many countries/regions and cities, relative volume has increased since January 13th, consistent with normal, seasonal usage of Apple Maps. Day of week effects are important to normalize as you use this data.</p>
+<p>Data that is sent from users’ devices to the Maps service is associated with random, rotating identifiers so Apple doesn’t have a profile of your movements and searches. Apple Maps has no demographic information about our users, so we can’t make any statements about the representativeness of our usage against the overall population.</p>
+<p><em>Thank you to Eric Green for the inspiration for these plots.</em></p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
