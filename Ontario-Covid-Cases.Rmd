@@ -1,0 +1,225 @@
+---
+title: "Ontario Map"
+author: "Chris Papalia"
+date: "5/1/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library(tidyverse)
+library(maps)
+library(sf)
+library(mapproj)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(ggmap)
+library(OpenStreetMap)
+library(ggrepel)
+```
+
+
+
+```{r}
+ont_cases <- read_csv("ontario_covid_cases.csv")
+```
+
+```{r}
+ont_cases %>% 
+glimpse()
+```
+
+```{r}
+ont_cases <- 
+ont_cases %>% 
+  mutate_at(vars(Age_Group, Client_Gender, Reporting_PHU, Case_AcquisitionInfo, Outcome1), as.factor)
+```
+
+```{r}
+ont_cases<- 
+ont_cases %>%
+  mutate(Age_Group = fct_recode(Age_Group, 
+                                "0-20" = "<20",
+                                "20-29" = "20s",
+                                "30-39" = "30s",
+                                "40-49" = "40s",
+                                "50-59" = "50s",
+                                "60-69" = "60s",
+                                "70-79" = "70s",
+                                "80-89" = "80s",
+                                "90-99" = "90s", 
+                                "NA" = "Unknown"
+                                ))  
+```
+
+```{r}
+ont_cases <- 
+ont_cases %>% 
+   filter(Age_Group != "NA")
+ 
+```
+
+```{r}
+ont_cases <- 
+ont_cases %>% 
+  mutate(lat = Reporting_PHU_Latitude,
+         long = Reporting_PHU_Longitude)
+```
+
+
+
+```{r}
+ont_cases %>% 
+  group_by(Age_Group) %>% 
+  summarise(n = n()) %>% 
+  ggplot(aes(x = Age_Group, y = n))+
+  geom_col(fill = "blue")
+```
+
+```{r}
+ont_cases %>% 
+  ggplot(aes(x = Age_Group, fill = Client_Gender))+
+  geom_bar(position = "dodge")
+```
+
+
+```{r}
+ont_cases_loc <- 
+ont_cases %>%
+  group_by(Reporting_PHU) %>% 
+  summarise(cases = n(),
+            long = mean(long),
+            lat = mean(lat))
+  
+
+```
+
+```{r}
+ont_cases_loc %>% 
+  ggplot(aes(x = long, y = lat, size = cases))+
+  geom_point()+
+  coord_map()+
+  borders(database = "world", regions = "canada")
+```
+
+
+```{r}
+Canada <- ne_countries(country = "Canada")
+```
+
+```{r}
+ggplot()+
+  geom_point(data = ont_cases_loc, aes(x = long, y = lat, size = cases))+
+  geom_sf()
+```
+
+
+Google Maps Etc
+
+Need to register API Key
+
+```{r}
+ggmap(get_map("Sudbury, ON", zoom = 6, maptype = "roadmap"))
+```
+
+
+```{r}
+ggmap(get_map("Oshawa, ON", zoom = 6, maptype = "roadmap"))
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Open Street Map
+
+```{r}
+Ontario_test = openmap(c(46, -85), c(42, -75), type = "esri-topo")
+```
+
+```{r}
+autoplot(Ontario_test)
+```
+
+
+Scale the long and lat coordinates of Ontario Cases
+
+```{r}
+lat_lon_convert <- as.data.frame(projectMercator(ont_cases_loc$lat, ont_cases_loc$long))
+```
+
+```{r}
+lat_lon_convert %>% 
+  mutate(lat = x, 
+         lon = y, 
+         health_unit = ont_cases_loc$Reporting_PHU,
+         cases = ont_cases_loc$cases) -> open_map_plot
+
+```
+
+
+```{r}
+open_map_plot %>% 
+  filter(lon < 5800000) %>% 
+  filter(lat < -8400000)-> open_map_plot_1
+```
+
+
+```{r}
+ont_cases_loc %>% 
+  arrange(desc(lat))
+```
+
+
+
+```{r}
+autoplot(Ontario_test)+
+  geom_point(data = open_map_plot_1, aes(x = lat, y = lon, size = cases, colour = health_unit), alpha = .8)+
+  scale_x_continuous(breaks = NULL)+
+  scale_y_continuous(breaks = NULL)+
+  scale_color_discrete(guide = FALSE )+
+  scale_size(name = "Cases", breaks = c(100, 500, 1000, 5000), range = c(1, 10))+
+  labs(x = "", y = "")+
+  #geom_text_repel(data = open_map_plot_1, aes(x = lat, y = lon, label = health_unit), size = 2)+
+  theme_minimal()
+
+```
+
+
+
+```{r}
+Trials <- openmap(c(46, -85), c(42, -75), type = "esri-topo")
+autoplot(Trials)
+
+```
+

@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Chris Papalia" />
+
+
+<title>Ontario Map</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h2 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h3 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h4 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h5 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h6 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">AC Plus - Spring 2020</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Week 1
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Week01-Intro.html">Week 1</a>
+    </li>
+    <li>
+      <a href="Week01-Intro-janitor-fix.html">Week 1 (Fix)</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="Week02-Saving-a-Plot.html">Week 2</a>
+</li>
+<li>
+  <a href="Week03-apple-mobility-tracker.html">Week 3</a>
+</li>
+<li>
+  <a href="Week04-Ontario-Covid-Cases.html">Week 4</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Ontario Map</h1>
+<h4 class="author">Chris Papalia</h4>
+<h4 class="date">5/1/2020</h4>
+
+</div>
+
+
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## -- Attaching packages ---------------------------------------------------------------------- tidyverse 1.3.0 --</code></pre>
+<pre><code>## v ggplot2 3.3.0     v purrr   0.3.3
+## v tibble  2.1.3     v dplyr   0.8.5
+## v tidyr   1.0.2     v stringr 1.4.0
+## v readr   1.3.1     v forcats 0.5.0</code></pre>
+<pre><code>## -- Conflicts ------------------------------------------------------------------------- tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(maps)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;maps&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:purrr&#39;:
+## 
+##     map</code></pre>
+<pre class="r"><code>library(sf)</code></pre>
+<pre><code>## Linking to GEOS 3.6.1, GDAL 2.2.3, PROJ 4.9.3</code></pre>
+<pre class="r"><code>library(mapproj)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(ggmap)</code></pre>
+<pre><code>## Google&#39;s Terms of Service: https://cloud.google.com/maps-platform/terms/.</code></pre>
+<pre><code>## Please cite ggmap if you use it! See citation(&quot;ggmap&quot;) for details.</code></pre>
+<pre class="r"><code>library(OpenStreetMap)
+library(ggrepel)</code></pre>
+<pre class="r"><code>ont_cases &lt;- read_csv(&quot;ontario_covid_cases.csv&quot;)</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   `_id` = col_double(),
+##   Row_ID = col_double(),
+##   Accurate_Episode_Date = col_datetime(format = &quot;&quot;),
+##   Age_Group = col_character(),
+##   Client_Gender = col_character(),
+##   Case_AcquisitionInfo = col_character(),
+##   Outcome1 = col_character(),
+##   Reporting_PHU = col_character(),
+##   Reporting_PHU_Address = col_character(),
+##   Reporting_PHU_City = col_character(),
+##   Reporting_PHU_Postal_Code = col_character(),
+##   Reporting_PHU_Website = col_character(),
+##   Reporting_PHU_Latitude = col_double(),
+##   Reporting_PHU_Longitude = col_double()
+## )</code></pre>
+<pre class="r"><code>ont_cases %&gt;% 
+glimpse()</code></pre>
+<pre><code>## Observations: 16,608
+## Variables: 14
+## $ `_id`                     &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13...
+## $ Row_ID                    &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13...
+## $ Accurate_Episode_Date     &lt;dttm&gt; 2020-01-22, 2020-01-21, 2020-01-24, 2020...
+## $ Age_Group                 &lt;chr&gt; &quot;50s&quot;, &quot;50s&quot;, &quot;20s&quot;, &quot;20s&quot;, &quot;60s&quot;, &quot;60s&quot;,...
+## $ Client_Gender             &lt;chr&gt; &quot;FEMALE&quot;, &quot;MALE&quot;, &quot;FEMALE&quot;, &quot;FEMALE&quot;, &quot;FE...
+## $ Case_AcquisitionInfo      &lt;chr&gt; &quot;Travel-Related&quot;, &quot;Travel-Related&quot;, &quot;Trav...
+## $ Outcome1                  &lt;chr&gt; &quot;Resolved&quot;, &quot;Resolved&quot;, &quot;Resolved&quot;, &quot;Reso...
+## $ Reporting_PHU             &lt;chr&gt; &quot;Toronto Public Health&quot;, &quot;Toronto Public ...
+## $ Reporting_PHU_Address     &lt;chr&gt; &quot;277 Victoria Street, 5th Floor&quot;, &quot;277 Vi...
+## $ Reporting_PHU_City        &lt;chr&gt; &quot;Toronto&quot;, &quot;Toronto&quot;, &quot;London&quot;, &quot;Toronto&quot;...
+## $ Reporting_PHU_Postal_Code &lt;chr&gt; &quot;M5B 1W2&quot;, &quot;M5B 1W2&quot;, &quot;N6A 5L7&quot;, &quot;M5B 1W2...
+## $ Reporting_PHU_Website     &lt;chr&gt; &quot;www.toronto.ca/community-people/health-w...
+## $ Reporting_PHU_Latitude    &lt;dbl&gt; 43.65659, 43.65659, 42.98147, 43.65659, 4...
+## $ Reporting_PHU_Longitude   &lt;dbl&gt; -79.37936, -79.37936, -81.25402, -79.3793...</code></pre>
+<pre class="r"><code>ont_cases &lt;- 
+ont_cases %&gt;% 
+  mutate_at(vars(Age_Group, Client_Gender, Reporting_PHU, Case_AcquisitionInfo, Outcome1), as.factor)</code></pre>
+<pre class="r"><code>ont_cases&lt;- 
+ont_cases %&gt;%
+  mutate(Age_Group = fct_recode(Age_Group, 
+                                &quot;0-20&quot; = &quot;&lt;20&quot;,
+                                &quot;20-29&quot; = &quot;20s&quot;,
+                                &quot;30-39&quot; = &quot;30s&quot;,
+                                &quot;40-49&quot; = &quot;40s&quot;,
+                                &quot;50-59&quot; = &quot;50s&quot;,
+                                &quot;60-69&quot; = &quot;60s&quot;,
+                                &quot;70-79&quot; = &quot;70s&quot;,
+                                &quot;80-89&quot; = &quot;80s&quot;,
+                                &quot;90-99&quot; = &quot;90s&quot;, 
+                                &quot;NA&quot; = &quot;Unknown&quot;
+                                ))  </code></pre>
+<pre class="r"><code>ont_cases &lt;- 
+ont_cases %&gt;% 
+   filter(Age_Group != &quot;NA&quot;)</code></pre>
+<pre class="r"><code>ont_cases &lt;- 
+ont_cases %&gt;% 
+  mutate(lat = Reporting_PHU_Latitude,
+         long = Reporting_PHU_Longitude)</code></pre>
+<pre class="r"><code>ont_cases %&gt;% 
+  group_by(Age_Group) %&gt;% 
+  summarise(n = n()) %&gt;% 
+  ggplot(aes(x = Age_Group, y = n))+
+  geom_col(fill = &quot;blue&quot;)</code></pre>
+<p><img src="Ontario-Covid-Cases_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<pre class="r"><code>ont_cases %&gt;% 
+  ggplot(aes(x = Age_Group, fill = Client_Gender))+
+  geom_bar(position = &quot;dodge&quot;)</code></pre>
+<p><img src="Ontario-Covid-Cases_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<pre class="r"><code>ont_cases_loc &lt;- 
+ont_cases %&gt;%
+  group_by(Reporting_PHU) %&gt;% 
+  summarise(cases = n(),
+            long = mean(long),
+            lat = mean(lat))</code></pre>
+<pre class="r"><code>ont_cases_loc %&gt;% 
+  ggplot(aes(x = long, y = lat, size = cases))+
+  geom_point()+
+  coord_map()+
+  borders(database = &quot;world&quot;, regions = &quot;canada&quot;)</code></pre>
+<p><img src="Ontario-Covid-Cases_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<pre class="r"><code>Canada &lt;- ne_countries(country = &quot;Canada&quot;)</code></pre>
+<pre class="r"><code>ggplot()+
+  geom_point(data = ont_cases_loc, aes(x = long, y = lat, size = cases))+
+  geom_sf()</code></pre>
+<p><img src="Ontario-Covid-Cases_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p>Google Maps Etc</p>
+<p>Need to register API Key</p>
+<pre class="r"><code>ggmap(get_map(&quot;Sudbury, ON&quot;, zoom = 6, maptype = &quot;roadmap&quot;))</code></pre>
+<pre><code>## Source : https://maps.googleapis.com/maps/api/staticmap?center=Sudbury,%20ON&amp;zoom=6&amp;size=640x640&amp;scale=2&amp;maptype=roadmap&amp;language=en-EN&amp;key=xxx-bvjGzd19c1eRdw</code></pre>
+<pre><code>## Source : https://maps.googleapis.com/maps/api/geocode/json?address=Sudbury,+ON&amp;key=xxx-bvjGzd19c1eRdw</code></pre>
+<p><img src="Ontario-Covid-Cases_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<pre class="r"><code>ggmap(get_map(&quot;Oshawa, ON&quot;, zoom = 6, maptype = &quot;roadmap&quot;))</code></pre>
+<pre><code>## Source : https://maps.googleapis.com/maps/api/staticmap?center=Oshawa,%20ON&amp;zoom=6&amp;size=640x640&amp;scale=2&amp;maptype=roadmap&amp;language=en-EN&amp;key=xxx-bvjGzd19c1eRdw</code></pre>
+<pre><code>## Source : https://maps.googleapis.com/maps/api/geocode/json?address=Oshawa,+ON&amp;key=xxx-bvjGzd19c1eRdw</code></pre>
+<p><img src="Ontario-Covid-Cases_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p>Open Street Map</p>
+<pre class="r"><code>Ontario_test = openmap(c(46, -85), c(42, -75), type = &quot;esri-topo&quot;)</code></pre>
+<pre class="r"><code>autoplot(Ontario_test)</code></pre>
+<p><img src="Ontario-Covid-Cases_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p>Scale the long and lat coordinates of Ontario Cases</p>
+<pre class="r"><code>lat_lon_convert &lt;- as.data.frame(projectMercator(ont_cases_loc$lat, ont_cases_loc$long))</code></pre>
+<pre class="r"><code>lat_lon_convert %&gt;% 
+  mutate(lat = x, 
+         lon = y, 
+         health_unit = ont_cases_loc$Reporting_PHU,
+         cases = ont_cases_loc$cases) -&gt; open_map_plot</code></pre>
+<pre class="r"><code>open_map_plot %&gt;% 
+  filter(lon &lt; 5800000) %&gt;% 
+  filter(lat &lt; -8400000)-&gt; open_map_plot_1</code></pre>
+<pre class="r"><code>ont_cases_loc %&gt;% 
+  arrange(desc(lat))</code></pre>
+<pre><code>## # A tibble: 34 x 4
+##    Reporting_PHU                              cases  long   lat
+##    &lt;fct&gt;                                      &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 Northwestern Health Unit                      15 -94.5  49.8
+##  2 Porcupine Health Unit                         59 -81.3  48.5
+##  3 Thunder Bay District Health Unit              74 -89.3  48.4
+##  4 Timiskaming Health Unit                       18 -79.7  47.5
+##  5 Algoma Public Health Unit                     13 -84.3  46.5
+##  6 Sudbury &amp; District Health Unit                57 -81.0  46.5
+##  7 North Bay Parry Sound District Health Unit    14 -79.5  46.3
+##  8 Renfrew County and District Health Unit       16 -77.1  45.8
+##  9 Ottawa Public Health                        1372 -75.8  45.3
+## 10 Eastern Ontario Health Unit                   92 -74.7  45.0
+## # ... with 24 more rows</code></pre>
+<pre class="r"><code>autoplot(Ontario_test)+
+  geom_point(data = open_map_plot_1, aes(x = lat, y = lon, size = cases, colour = health_unit), alpha = .8)+
+  scale_x_continuous(breaks = NULL)+
+  scale_y_continuous(breaks = NULL)+
+  scale_color_discrete(guide = FALSE )+
+  scale_size(name = &quot;Cases&quot;, breaks = c(100, 500, 1000, 5000), range = c(1, 10))+
+  labs(x = &quot;&quot;, y = &quot;&quot;)+
+  #geom_text_repel(data = open_map_plot_1, aes(x = lat, y = lon, label = health_unit), size = 2)+
+  theme_minimal()</code></pre>
+<pre><code>## Scale for &#39;x&#39; is already present. Adding another scale for &#39;x&#39;, which will
+## replace the existing scale.</code></pre>
+<pre><code>## Scale for &#39;y&#39; is already present. Adding another scale for &#39;y&#39;, which will
+## replace the existing scale.</code></pre>
+<p><img src="Ontario-Covid-Cases_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+<pre class="r"><code>Trials &lt;- openmap(c(46, -85), c(42, -75), type = &quot;esri-topo&quot;)
+autoplot(Trials)</code></pre>
+<p><img src="Ontario-Covid-Cases_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

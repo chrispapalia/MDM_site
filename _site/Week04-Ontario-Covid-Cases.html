@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Chris Papalia" />
+
+
+<title>Ontario Cases - OSM Map</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h2 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h3 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h4 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h5 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h6 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">AC Plus - Spring 2020</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Week 1
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Week01-Intro.html">Week 1</a>
+    </li>
+    <li>
+      <a href="Week01-Intro-janitor-fix.html">Week 1 (Fix)</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="Week02-Saving-a-Plot.html">Week 2</a>
+</li>
+<li>
+  <a href="Week03-apple-mobility-tracker.html">Week 3</a>
+</li>
+<li>
+  <a href="Week04-Ontario-Covid-Cases.html">Week 4</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Ontario Cases - OSM Map</h1>
+<h4 class="author">Chris Papalia</h4>
+<h4 class="date">5/2/2020</h4>
+
+</div>
+
+
+<div id="load-the-libraries" class="section level3">
+<h3>Load the Libraries</h3>
+<pre class="r"><code>library(tidyverse)
+library(maps)
+library(sf)
+library(mapproj)
+library(OpenStreetMap)
+library(ggrepel)
+library(ggmap)
+library(scales)</code></pre>
+</div>
+<div id="load-and-clean-the-data" class="section level2">
+<h2>Load and Clean the Data</h2>
+<p>Let’s load the data from the website: <a href="https://data.ontario.ca/dataset/confirmed-positive-cases-of-covid-19-in-ontario/resource/455fd63b-603d-4608-8216-7d8647f43350?view_id=95311e17-8314-42a7-82ae-05b55c839659">https://data.ontario.ca/dataset/confirmed-positive-cases-of-covid-19-in-ontario/resource/455fd63b-603d-4608-8216-7d8647f43350?view_id=95311e17-8314-42a7-82ae-05b55c839659</a>, which allows us to download a list of confirmed cases.</p>
+<p>I have already downloaded the files and put them in your working directory in Rstudio.cloud. Let’s go through the cases as we look and inspect the file with the <code>glimpse()</code> command to get a sense of its structure.</p>
+<pre class="r"><code>ont_cases &lt;- read_csv(&quot;ontario_covid_cases.csv&quot;)
+
+ont_cases %&gt;% 
+glimpse()</code></pre>
+<pre><code>## Observations: 16,608
+## Variables: 14
+## $ `_id`                     &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13...
+## $ Row_ID                    &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13...
+## $ Accurate_Episode_Date     &lt;dttm&gt; 2020-01-22, 2020-01-21, 2020-01-24, 2020...
+## $ Age_Group                 &lt;chr&gt; &quot;50s&quot;, &quot;50s&quot;, &quot;20s&quot;, &quot;20s&quot;, &quot;60s&quot;, &quot;60s&quot;,...
+## $ Client_Gender             &lt;chr&gt; &quot;FEMALE&quot;, &quot;MALE&quot;, &quot;FEMALE&quot;, &quot;FEMALE&quot;, &quot;FE...
+## $ Case_AcquisitionInfo      &lt;chr&gt; &quot;Travel-Related&quot;, &quot;Travel-Related&quot;, &quot;Trav...
+## $ Outcome1                  &lt;chr&gt; &quot;Resolved&quot;, &quot;Resolved&quot;, &quot;Resolved&quot;, &quot;Reso...
+## $ Reporting_PHU             &lt;chr&gt; &quot;Toronto Public Health&quot;, &quot;Toronto Public ...
+## $ Reporting_PHU_Address     &lt;chr&gt; &quot;277 Victoria Street, 5th Floor&quot;, &quot;277 Vi...
+## $ Reporting_PHU_City        &lt;chr&gt; &quot;Toronto&quot;, &quot;Toronto&quot;, &quot;London&quot;, &quot;Toronto&quot;...
+## $ Reporting_PHU_Postal_Code &lt;chr&gt; &quot;M5B 1W2&quot;, &quot;M5B 1W2&quot;, &quot;N6A 5L7&quot;, &quot;M5B 1W2...
+## $ Reporting_PHU_Website     &lt;chr&gt; &quot;www.toronto.ca/community-people/health-w...
+## $ Reporting_PHU_Latitude    &lt;dbl&gt; 43.65659, 43.65659, 42.98147, 43.65659, 4...
+## $ Reporting_PHU_Longitude   &lt;dbl&gt; -79.37936, -79.37936, -81.25402, -79.3793...</code></pre>
+<p>We can also use the <code>summary()</code> command to get a sense of the data and describe some of the features we see. This gives a quick look at the basic elements and features of the data. For instance, we can see that when an variable is coded as a <em>character</em> datatype, it does not give us much insight in terms of grouping, so we’ll need to make some changes to the data type of many of the variables.</p>
+<pre class="r"><code>ont_cases %&gt;% 
+  summary()</code></pre>
+<pre><code>##       _id            Row_ID      Accurate_Episode_Date        
+##  Min.   :    1   Min.   :    1   Min.   :2020-01-01 00:00:00  
+##  1st Qu.: 4153   1st Qu.: 4153   1st Qu.:2020-03-28 00:00:00  
+##  Median : 8304   Median : 8304   Median :2020-04-08 00:00:00  
+##  Mean   : 8304   Mean   : 8304   Mean   :2020-04-06 04:03:02  
+##  3rd Qu.:12456   3rd Qu.:12456   3rd Qu.:2020-04-16 00:00:00  
+##  Max.   :16608   Max.   :16608   Max.   :2020-04-30 00:00:00  
+##   Age_Group         Client_Gender      Case_AcquisitionInfo   Outcome1        
+##  Length:16608       Length:16608       Length:16608         Length:16608      
+##  Class :character   Class :character   Class :character     Class :character  
+##  Mode  :character   Mode  :character   Mode  :character     Mode  :character  
+##                                                                               
+##                                                                               
+##                                                                               
+##  Reporting_PHU      Reporting_PHU_Address Reporting_PHU_City
+##  Length:16608       Length:16608          Length:16608      
+##  Class :character   Class :character      Class :character  
+##  Mode  :character   Mode  :character      Mode  :character  
+##                                                             
+##                                                             
+##                                                             
+##  Reporting_PHU_Postal_Code Reporting_PHU_Website Reporting_PHU_Latitude
+##  Length:16608              Length:16608          Min.   :42.31         
+##  Class :character          Class :character      1st Qu.:43.65         
+##  Mode  :character          Mode  :character      Median :43.66         
+##                                                  Mean   :43.82         
+##                                                  3rd Qu.:43.97         
+##                                                  Max.   :49.77         
+##  Reporting_PHU_Longitude
+##  Min.   :-94.49         
+##  1st Qu.:-79.71         
+##  Median :-79.38         
+##  Mean   :-79.40         
+##  3rd Qu.:-79.38         
+##  Max.   :-74.74</code></pre>
+<p>You can see that the structure has all character data types, so we should recode these character types as factors so that we can more easily manipulate the data. Fortunately, this data is already tidy because each row represents one observation (case) of COVID-19 and we won’t need to do much in terms of tidying, but we’ll need to do some basic data cleaning so that we have nicer data to work with.</p>
+<pre class="r"><code>ont_cases_clean &lt;- 
+ont_cases %&gt;% 
+  mutate_at(vars(Age_Group, Client_Gender, Reporting_PHU, Case_AcquisitionInfo, Outcome1), as.factor) %&gt;% 
+  # Change the selected vars to Factors to more easily work with them
+  mutate(Age_Group = fct_recode(Age_Group, 
+                                &quot;0-20&quot; = &quot;&lt;20&quot;,
+                                &quot;20-29&quot; = &quot;20s&quot;,
+                                &quot;30-39&quot; = &quot;30s&quot;,
+                                &quot;40-49&quot; = &quot;40s&quot;,
+                                &quot;50-59&quot; = &quot;50s&quot;,
+                                &quot;60-69&quot; = &quot;60s&quot;,
+                                &quot;70-79&quot; = &quot;70s&quot;,
+                                &quot;80-89&quot; = &quot;80s&quot;,
+                                &quot;90-99&quot; = &quot;90s&quot;, 
+                                &quot;NA&quot; = &quot;Unknown&quot;
+                                ) # Recode the Factors for Ages
+         
+         ) %&gt;%   
+  filter(Age_Group != &quot;NA&quot;) %&gt;%  # Remove the 7 Unknown Age_Group
+  mutate(lat = Reporting_PHU_Latitude, 
+         lon = Reporting_PHU_Longitude) %&gt;%  # Create a Lat and Lon Variable
+  mutate(Outcome = Outcome1, 
+         Gender = Client_Gender) %&gt;% 
+  select(-`_id`,-Outcome1, -Client_Gender, -Reporting_PHU_Address:-Reporting_PHU_Longitude) # Remove the Variables not needed</code></pre>
+</div>
+<div id="explore-the-data" class="section level2">
+<h2>Explore the Data</h2>
+<p>Now that we have cleaned the data, let’s take a look at some basic elements of the data using some summaries and some plotting. Now that we made variables into factors, we are in good shape to examine the outputs in more detail.</p>
+<pre class="r"><code>ont_cases_clean %&gt;% 
+  summary()</code></pre>
+<pre><code>##      Row_ID      Accurate_Episode_Date           Age_Group   
+##  Min.   :    1   Min.   :2020-01-01 00:00:00   50-59  :2750  
+##  1st Qu.: 4152   1st Qu.:2020-03-28 00:00:00   40-49  :2254  
+##  Median : 8305   Median :2020-04-08 00:00:00   80-89  :2158  
+##  Mean   : 8305   Mean   :2020-04-06 04:04:47   60-69  :2146  
+##  3rd Qu.:12458   3rd Qu.:2020-04-16 00:00:00   30-39  :1965  
+##  Max.   :16608   Max.   :2020-04-30 00:00:00   20-29  :1821  
+##                                                (Other):3507  
+##                   Case_AcquisitionInfo
+##  Contact of a confirmed case:3396     
+##  Information pending        :6105     
+##  Neither                    :5897     
+##  Travel-Related             :1203     
+##                                       
+##                                       
+##                                       
+##                             Reporting_PHU       lat             lon        
+##  Toronto Public Health             :5039   Min.   :42.31   Min.   :-94.49  
+##  Peel Public Health                :2345   1st Qu.:43.65   1st Qu.:-79.71  
+##  York Region Public Health Services:1523   Median :43.66   Median :-79.38  
+##  Ottawa Public Health              :1372   Mean   :43.82   Mean   :-79.40  
+##  Durham Region Health Department   : 963   3rd Qu.:43.97   3rd Qu.:-79.38  
+##  Region of Waterloo, Public Health : 694   Max.   :49.77   Max.   :-74.74  
+##  (Other)                           :4665                                   
+##          Outcome              Gender    
+##  Fatal       : 1121   FEMALE     :9533  
+##  Not Resolved: 4662   MALE       :6915  
+##  Resolved    :10818   OTHER      :   2  
+##                       TRANSGENDER:   2  
+##                       UNKNOWN    : 149  
+##                                         
+## </code></pre>
+<p>We can go a little further in future anaysis to create some other grouping with the factors due to some small cases in some of the groups. The summary is a great place to start, though. So, let’s take a look at distributions of age for these cases across Ontario. These plots will be quick and dirty. Hopefully the code is intutive also.</p>
+<div id="age-groups" class="section level3">
+<h3>Age Groups</h3>
+<p>I will walk us through the first part of the data to show how R thinks about individual observations of data. Then, I will use a different function that has this built in to it.</p>
+<pre class="r"><code>ont_cases_clean %&gt;% #Start with the Clean Data
+  group_by(Age_Group) %&gt;% #We want to group by the Age group of the case
+  summarise(n = n()) %&gt;% #Use the Summarize Function with the n() function to count how many people are in each group
+  ggplot(aes(x = Age_Group, y = n))+ # Create a plot later that has Age on x and count on y
+  geom_col() # Make this a column plot</code></pre>
+<p><img src="Week04-Ontario-Covid-Cases_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>The same plot a different way. The geom_bar() function uses the stat = count() at its core, so we don’t need to create a summary before plotting. This is useful when your data is already tidy.</p>
+<pre class="r"><code>ont_cases_clean %&gt;% 
+  ggplot(aes(x = Age_Group))+
+geom_bar()</code></pre>
+<p><img src="Week04-Ontario-Covid-Cases_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>Let’s see if we can find some relationships between some of the variables. Let’s see if the outcome varies much with the age groups. We can look at this by count and by percent.</p>
+<pre class="r"><code>ont_cases_clean %&gt;% 
+  ggplot(aes(x = Age_Group, fill = Outcome))+
+  geom_bar()</code></pre>
+<p><img src="Week04-Ontario-Covid-Cases_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<pre class="r"><code>ont_cases_clean %&gt;% 
+  ggplot(aes(x = Age_Group, fill = Outcome))+
+  geom_bar(aes(y = (..count..)/sum(..count..)))+
+  scale_y_continuous(labels = percent_format())</code></pre>
+<p><img src="Week04-Ontario-Covid-Cases_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+</div>
+<div id="gender" class="section level3">
+<h3>Gender</h3>
+<p>Firstly, with gender, we will need to remove the 2 others, the 2 transgender, and the 149 unknowns. Then, we’ll look at the data in a side-by-side bar chart.</p>
+<pre class="r"><code>ont_cases_clean %&gt;%
+  filter(Gender %in% c(&quot;MALE&quot;, &quot;FEMALE&quot;)) %&gt;% 
+  ggplot(aes(x = Age_Group, fill = Gender))+
+  geom_bar(position = &quot;dodge&quot;)</code></pre>
+<p><img src="Week04-Ontario-Covid-Cases_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p>Let’s wonder, what does this reveal about the confirmed cases in Ontario?</p>
+<p>I wonder if maybe there is a relationship between whether cases have been fatal more often in men or women bases on the data. Note, we’re only looking at cases that are have been resolved in one way or another.</p>
+<pre class="r"><code>ont_cases_clean %&gt;% 
+  filter(Gender %in% c(&quot;MALE&quot;, &quot;FEMALE&quot;)) %&gt;% 
+  filter(Outcome != &quot;Not Resolved&quot;) %&gt;% 
+  ggplot(aes(x = Gender, fill = Outcome))+
+  geom_bar(position = &quot;fill&quot;)+
+  scale_y_continuous(labels = percent_format())</code></pre>
+<p><img src="Week04-Ontario-Covid-Cases_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+</div>
+</div>
+<div id="mapping-locations-for-cases-across-southern-ontario" class="section level2">
+<h2>Mapping Locations for Cases Across Southern Ontario</h2>
+<p>Something that I haven’t tried to yet is create a map using the R software, so it was exciting to create a map using the Open Street Maps package. Unforunatey, only some countries have maps built into the regular r packages, and I couldn’t find a map of Ontario very easily.</p>
+<p>To start, let’s look at a basis map of the lat and lon coordinates in a scatter plot. In order to do that, we need to summarize the data by the lat and lon coordinates of the reporting Ontario Health Units. This new data will count all the cases processed at the health unit and keep the lat and lon coordinates of each of the health units for a map.</p>
+<pre class="r"><code>ont_cases_loc &lt;- 
+ont_cases_clean %&gt;% # Start with our cleaned data
+  group_by(Reporting_PHU) %&gt;%  # Group each case by the Health Unit
+  summarise(cases = n(), # Count How many cases at each unit using n()
+            lat = mean(lat), # create a variable lat (note that I needed to use mean because it aggregates all the data)
+            lon = mean(lon) # create a variable lon (note that I needed to use mean because it aggregates all the data)
+            ) %&gt;% 
+  ungroup() # Ungroups the data to make it a data class rather than grouped data
+
+ont_cases_loc %&gt;% 
+  arrange(desc(cases))</code></pre>
+<pre><code>## # A tibble: 34 x 4
+##    Reporting_PHU                           cases   lat   lon
+##    &lt;fct&gt;                                   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 Toronto Public Health                    5039  43.7 -79.4
+##  2 Peel Public Health                       2345  43.6 -79.7
+##  3 York Region Public Health Services       1523  44.0 -79.5
+##  4 Ottawa Public Health                     1372  45.3 -75.8
+##  5 Durham Region Health Department           963  43.9 -78.9
+##  6 Region of Waterloo, Public Health         694  43.5 -80.5
+##  7 Windsor-Essex County Health Unit          589  42.3 -83.0
+##  8 Niagara Region Public Health Department   485  43.1 -79.2
+##  9 Halton Region Health Department           458  43.4 -79.7
+## 10 Hamilton Public Health Services           425  43.3 -79.9
+## # ... with 24 more rows</code></pre>
+<div id="map-these-locations-on-a-map-of-canada" class="section level3">
+<h3>Map these locations on a map of Canada</h3>
+<p>The only map that I could find built into R was a map of Canada. This would be helpful if I could filter it by province, but alas, I can’t get any more detailed than regions = Canada.</p>
+<p>Essentialy what I need to do is map a scatterplot onto a map. Here’s a scatterplot function using geom_point() and the geom_sf() function is used to keep the map coordinates in perspective.</p>
+<pre class="r"><code>ggplot()+
+  geom_point(data = ont_cases_loc, aes(x = lon, y = lat, size = cases))+
+  geom_sf()</code></pre>
+<p><img src="Week04-Ontario-Covid-Cases_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p>Here is the output of a map of Canada.</p>
+<pre class="r"><code>ont_cases_loc %&gt;% 
+  ggplot(aes(x = lon, y = lat, size = cases))+
+  geom_point()+
+  coord_map()+
+  borders(database = &quot;world&quot;, regions = &quot;canada&quot;)+
+  theme_minimal()+
+  scale_size(name = &quot;Cases&quot;, breaks = c(100, 500, 1000, 5000), range = c(1, 5))+
+  labs(x = &quot;&quot;, y = &quot;&quot;)</code></pre>
+<p><img src="Week04-Ontario-Covid-Cases_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+</div>
+<div id="map-these-locations-on-a-street-map" class="section level3">
+<h3>Map these locations on a street map</h3>
+<p>We will create an object that pulls from the Open Street Map database to plot the points on. We will call the object OSM_South_Ont to represent Southern Ontario for our plot.</p>
+<pre class="r"><code>OSM_South_Ont &lt;- openmap(c(41.73, -83.84), c(45.6, -73.85), type = &quot;esri-topo&quot;)</code></pre>
+<p>Once, we assign the map to an object, we can use the <code>ggplot()</code> function to plot it. As with any <code>ggplot()</code>, we can add layers onto the plot to create a map of the amount of cases that are seen at each Provincial Health Unit.</p>
+<p>Here is the layer that we will build our plot on.</p>
+<pre class="r"><code>autoplot(OSM_South_Ont)</code></pre>
+<p><img src="Week04-Ontario-Covid-Cases_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<p>One of the drawbacks of the OSM Map is that the latitude and longitude coordinates are enlarged in their scales, so the actual latitude and longitude coordinates do not match the map. This is a drawback of the OSM Maps, but it’s possible to convert the actual latitude and longitude into coordinates that match up with the OSM Map.</p>
+<p>Let’s work through that by scaling the coordinates in <code>ont_cases_loc</code> data while preserving the Reporting Health Units. We can scale these coordinates using the <code>projectMercator()</code> function in the OpenStreetMaps package.</p>
+<pre class="r"><code>osm_plot &lt;- as.data.frame(projectMercator(ont_cases_loc$lat, ont_cases_loc$lon)) #this takes the lat and lon coordinates as converted and puts them into a data frame to use to plot. We will then add onto it.
+
+osm_plot %&gt;% 
+  head(3)</code></pre>
+<pre><code>##          x       y
+## 1 -9385885 5866077
+## 2 -8936102 5335108
+## 3 -9151415 5221669</code></pre>
+<p>By inspecting this, we see the function has created an x and y coordinate for the latitude and longitude inputs we gave them. They’re also in order of the Reporting Health Units. This is impotant so that we can preserve the proper Health Unit with the correct coordinates.</p>
+<p>Now, we’ll add new variables using the mutate function (transmute) to create the other elements of the dataframe we’re going to plot and remove the old x and y coordinates. The transmute function removes the variables we don’t specify.</p>
+<pre class="r"><code>osm_plot %&gt;% 
+  transmute(lat = x, 
+         lon = y, 
+         health_unit = ont_cases_loc$Reporting_PHU,
+         cases = ont_cases_loc$cases) -&gt; osm_plot_RHU
+
+osm_plot_RHU %&gt;% 
+  head(3)</code></pre>
+<pre><code>##        lat     lon               health_unit cases
+## 1 -9385885 5866077 Algoma Public Health Unit    13
+## 2 -8936102 5335108  Brant County Health Unit   102
+## 3 -9151415 5221669  Chatham-Kent Health Unit    83</code></pre>
+<p>Now that we have the Reporting Heath Units with coordinates that scale to the map, we are ready to make our plot.</p>
+<p>First, though, we need to remove some of the Reporting Health Units that are outside of our Southern Ontario map boundaries. (Sorry for those from this area!). We’ll create a dataframe that filters those Health Units that are outside the boundaries of the plot.</p>
+<pre class="r"><code>osm_plot_RHU_South &lt;- 
+osm_plot_RHU %&gt;% 
+  filter(lon &lt; 5700000) %&gt;% 
+  filter(lat &lt; -8400000)</code></pre>
+<pre class="r"><code>autoplot(OSM_South_Ont)+
+  geom_point(data = osm_plot_RHU_South, aes(x = lat, y = lon, size = cases, colour = health_unit), alpha = .8)+
+  scale_x_continuous(breaks = NULL)+
+  scale_y_continuous(breaks = NULL)+
+  scale_color_discrete(guide = FALSE )+
+  scale_size(name = &quot;Cases&quot;, breaks = c(100, 500, 1000, 5000), range = c(1, 10))+
+  labs(x = &quot;&quot;, 
+       y = &quot;&quot;, 
+       title = &quot;The Number of Confirmed Cases of COVID-19 Reported in Southern Ontario&quot;,
+       subtitle = &quot;Grouped by Ontario Health Units&quot;)+
+  geom_text_repel(data = osm_plot_RHU_South, aes(x = lat, y = lon, label = health_unit), size = 2)+
+  theme_minimal()+
+  theme(legend.justification = c(1,0), legend.position = c(.95,.1))</code></pre>
+<p><img src="Week04-Ontario-Covid-Cases_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

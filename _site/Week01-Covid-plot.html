@@ -292,6 +292,9 @@ $(document).ready(function () {
 <li>
   <a href="Week03-apple-mobility-tracker.html">Week 3</a>
 </li>
+<li>
+  <a href="Week04-Ontario-Covid-Cases.html">Week 4</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         
@@ -375,43 +378,43 @@ covid_cases&lt;- covid_cases %&gt;%
 <tbody>
 <tr class="odd">
 <td align="left">US</td>
-<td align="right">1012582</td>
+<td align="right">1158040</td>
 </tr>
 <tr class="even">
 <td align="left">Spain</td>
-<td align="right">232128</td>
+<td align="right">217466</td>
 </tr>
 <tr class="odd">
 <td align="left">Italy</td>
-<td align="right">201505</td>
+<td align="right">210717</td>
 </tr>
 <tr class="even">
+<td align="left">United Kingdom</td>
+<td align="right">186599</td>
+</tr>
+<tr class="odd">
 <td align="left">France</td>
 <td align="right">167605</td>
 </tr>
-<tr class="odd">
-<td align="left">United Kingdom</td>
-<td align="right">161145</td>
-</tr>
 <tr class="even">
 <td align="left">Germany</td>
-<td align="right">159912</td>
+<td align="right">165664</td>
 </tr>
 <tr class="odd">
-<td align="left">Turkey</td>
-<td align="right">114653</td>
-</tr>
-<tr class="even">
 <td align="left">Russia</td>
-<td align="right">93558</td>
-</tr>
-<tr class="odd">
-<td align="left">Iran</td>
-<td align="right">92584</td>
+<td align="right">134687</td>
 </tr>
 <tr class="even">
+<td align="left">Turkey</td>
+<td align="right">126045</td>
+</tr>
+<tr class="odd">
 <td align="left">Brazil</td>
-<td align="right">73235</td>
+<td align="right">101826</td>
+</tr>
+<tr class="even">
+<td align="left">Iran</td>
+<td align="right">97424</td>
 </tr>
 <tr class="odd">
 <td align="left">China</td>
@@ -419,39 +422,39 @@ covid_cases&lt;- covid_cases %&gt;%
 </tr>
 <tr class="even">
 <td align="left">Belgium</td>
-<td align="right">47334</td>
-</tr>
-<tr class="odd">
-<td align="left">Netherlands</td>
-<td align="right">38416</td>
-</tr>
-<tr class="even">
-<td align="left">India</td>
-<td align="right">31324</td>
+<td align="right">49906</td>
 </tr>
 <tr class="odd">
 <td align="left">Peru</td>
-<td align="right">31190</td>
+<td align="right">45928</td>
 </tr>
 <tr class="even">
-<td align="left">Switzerland</td>
-<td align="right">29264</td>
+<td align="left">India</td>
+<td align="right">42505</td>
 </tr>
 <tr class="odd">
+<td align="left">Netherlands</td>
+<td align="right">40571</td>
+</tr>
+<tr class="even">
 <td align="left">Canada</td>
-<td align="right">25761</td>
+<td align="right">31873</td>
+</tr>
+<tr class="odd">
+<td align="left">Switzerland</td>
+<td align="right">29905</td>
+</tr>
+<tr class="even">
+<td align="left">Ecuador</td>
+<td align="right">29538</td>
+</tr>
+<tr class="odd">
+<td align="left">Saudi Arabia</td>
+<td align="right">27011</td>
 </tr>
 <tr class="even">
 <td align="left">Portugal</td>
-<td align="right">24322</td>
-</tr>
-<tr class="odd">
-<td align="left">Ecuador</td>
-<td align="right">24258</td>
-</tr>
-<tr class="even">
-<td align="left">Saudi Arabia</td>
-<td align="right">20077</td>
+<td align="right">25351</td>
 </tr>
 </tbody>
 </table>
@@ -460,7 +463,7 @@ covid_cases&lt;- covid_cases %&gt;%
 <div id="create-a-summary-plot" class="section level3">
 <h3>Create a Summary Plot</h3>
 <p>Now that we have this data output, let’s make our first plot of the data. This will be a bar graph that will show the twenty most-affected countries in the world. It will essentially take the output of the last code and use it to make a plot.</p>
-<p>Some things to keep in mind. The output is a <code>tibble</code> which is a type of data frame that R likes work with. The data was initially 25872 by 6 tibble and it’s been converted into a 20 by 2 tibble.</p>
+<p>Some things to keep in mind. The output is a <code>tibble</code> which is a type of data frame that R likes work with. The data was initially 27398 by 6 tibble and it’s been converted into a 20 by 2 tibble.</p>
 <p>The following plot, take the data from the chart and creates a plot to show the countries that are most affected by the COVID-19 outbreak.</p>
 <p><img src="Week01-Covid-plot_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 </div>
