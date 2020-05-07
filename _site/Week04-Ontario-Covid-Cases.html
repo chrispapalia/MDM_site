@@ -296,6 +296,9 @@ $(document).ready(function () {
 <li>
   <a href="Week04-Ontario-Covid-Cases.html">Week 4</a>
 </li>
+<li>
+  <a href="OAME-live.html">OAME - Live</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         
@@ -474,7 +477,12 @@ geom_bar()</code></pre>
 <pre class="r"><code>ont_cases_clean %&gt;% 
   ggplot(aes(x = Age_Group, fill = Outcome))+
   geom_bar(aes(y = (..count..)/sum(..count..)))+
-  scale_y_continuous(labels = percent_format())</code></pre>
+  scale_y_continuous(labels = percent_format())+
+  labs(x = &quot;Age Group&quot;, 
+       y = &quot;Percent of Cases&quot;,
+       title = &quot;The Number of COVID-19 Cases by Age Group&quot;,
+       subtitle = &quot;Colour Indicates Outcome&quot;)+
+  theme_light()</code></pre>
 <p><img src="Week04-Ontario-Covid-Cases_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 </div>
 <div id="gender" class="section level3">
@@ -483,7 +491,12 @@ geom_bar()</code></pre>
 <pre class="r"><code>ont_cases_clean %&gt;%
   filter(Gender %in% c(&quot;MALE&quot;, &quot;FEMALE&quot;)) %&gt;% 
   ggplot(aes(x = Age_Group, fill = Gender))+
-  geom_bar(position = &quot;dodge&quot;)</code></pre>
+  geom_bar(position = &quot;dodge&quot;)+
+  theme_minimal()+
+  labs(x = &quot;Age Group&quot;,
+       y = &quot;Count&quot;, 
+       title = &quot;The Number of COVID-19 Cases in Ontario by Gender&quot;, 
+       subtitle = &quot;Colour Indicates Gender&quot;)</code></pre>
 <p><img src="Week04-Ontario-Covid-Cases_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 <p>Let’s wonder, what does this reveal about the confirmed cases in Ontario?</p>
 <p>I wonder if maybe there is a relationship between whether cases have been fatal more often in men or women bases on the data. Note, we’re only looking at cases that are have been resolved in one way or another.</p>

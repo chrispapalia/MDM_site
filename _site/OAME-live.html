@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Chris Papalia" />
+
+
+<title>OAME - Live Code</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h2 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h3 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h4 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h5 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h6 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">AC Plus - Spring 2020</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Week 1
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Week01-Intro.html">Week 1</a>
+    </li>
+    <li>
+      <a href="Week01-Intro-janitor-fix.html">Week 1 (Fix)</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="Week02-Saving-a-Plot.html">Week 2</a>
+</li>
+<li>
+  <a href="Week03-apple-mobility-tracker.html">Week 3</a>
+</li>
+<li>
+  <a href="Week04-Ontario-Covid-Cases.html">Week 4</a>
+</li>
+<li>
+  <a href="OAME-live.html">OAME - Live</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">OAME - Live Code</h1>
+<h4 class="author">Chris Papalia</h4>
+<h4 class="date">5/4/2020</h4>
+
+</div>
+
+
+<div id="live-coding-and-r" class="section level1">
+<h1>Live Coding and R</h1>
+<p>Welcome to the OAME Presentation MDM4U As Data Science. This section of the talk can be referenced through a webpage on the domain highschoolteach-r.netlify.com. See the tab titled OAME - Live. This site was built entirely using R, and trust me, I have no idea how to actually build a webpage, so it shows you how easily this can be created using some simple steps and tutorials. I’ve used some resources to help along the way, but in general, I am using RMarkdown to produce html documents when I click the “knit” button at the top.</p>
+<p>You can follow along at <a href="https://highschoolteach-r.netlify.app/">https://highschoolteach-r.netlify.app/</a> if you select <strong>OAME - Live </strong> in the top menu.</p>
+<p>Lets’ go…</p>
+<p>The first thing we need to do is load the libraries that we will need to work with in R. Since you’re working with the Cloud version, I loaded these for you. One huge advantage of using the cloud version of R is that the instructor has control over this. Starting out using the cloud version is your safest bet since it only requires a browser to use. Please watch <a href="https://rstudio.com/resources/webinars/teaching-r-online-with-rstudio-cloud/">this webinar</a> by <a href="http://www2.stat.duke.edu/~mc301/">Dr. Mine Çetinkaya-Rundel</a> for information on this. The libraries give us access to the functions and files within them. Each library offers it own special group of functions. The underpinning of working (<strong>intelligibly</strong>) with R is the <code>tidyverse</code> set of packages and language. This is the foundation of the newer, more intuitive R commands that many in the data science field use, and those that we’ll use to do our work today.</p>
+<p>In order to access data, we’ll also be using carData package, which is used to accompany a book titled <em>An R Companion to Applied Regression, 3rd Edition, Sage (2019)</em> <a href="https://cran.r-project.org/web/packages/carData/index.html">carData: Companion to Applied Regression Data Sets</a>.</p>
+<p>In addition to the data from this textbook, you’ll get a taste of some other data from the wild when we take a peak at the data from a <a href="https://fivethirtyeight.com/">FiveThirtyEight.com</a> article. One of the benefits of R is that it allows us access to data, resources, and functions that others have used.</p>
+<div id="load-packages" class="section level3">
+<h3>Load Packages</h3>
+<pre class="r"><code>library(tidyverse)
+library(carData)
+library(knitr)
+library(fivethirtyeight)
+library(broom)</code></pre>
+</div>
+<div id="gss-vocab-data-categorical" class="section level2">
+<h2>GSS Vocab Data (Categorical)</h2>
+<p>For the purpose of today’s chat, we’ll look at the data collected from the US General Soceity Survey from the National Opinion Research Centre of the University of Chicago.</p>
+<pre class="r"><code>GSSvocab # Use the Viewer, summary, glimpse</code></pre>
+<p>Based on the data, we can see there are entries for the year, the gender, whether born in US, the age group, the education group, vocab, age, and education.</p>
+<p>Let’s begin to explore and summarize the data using the count function.</p>
+<pre class="r"><code>GSSvocab %&gt;% 
+  count(educGroup)</code></pre>
+<pre><code>## # A tibble: 6 x 2
+##   educGroup     n
+##   &lt;fct&gt;     &lt;int&gt;
+## 1 &lt;12 yrs    5924
+## 2 12 yrs     8612
+## 3 13-15 yrs  7182
+## 4 16 yrs     3914
+## 5 &gt;16 yrs    3154
+## 6 &lt;NA&gt;         81</code></pre>
+<p>Maybe, based on these counts, I want to see whether there is a relationship between two categorical variables. Let’s take a look at whether being native born seems to have some association with one’s education group?</p>
+<pre class="r"><code>GSSvocab %&gt;% 
+  group_by(nativeBorn, educGroup) %&gt;% 
+  summarise(n = n()) # n() counts the number of observations of each factor</code></pre>
+<pre><code>## Warning: Factor `nativeBorn` contains implicit NA, consider using
+## `forcats::fct_explicit_na`</code></pre>
+<pre><code>## Warning: Factor `educGroup` contains implicit NA, consider using
+## `forcats::fct_explicit_na`</code></pre>
+<pre><code>## Warning: Factor `nativeBorn` contains implicit NA, consider using
+## `forcats::fct_explicit_na`</code></pre>
+<pre><code>## # A tibble: 18 x 3
+## # Groups:   nativeBorn [3]
+##    nativeBorn educGroup     n
+##    &lt;fct&gt;      &lt;fct&gt;     &lt;int&gt;
+##  1 no         &lt;12 yrs     690
+##  2 no         12 yrs      520
+##  3 no         13-15 yrs   586
+##  4 no         16 yrs      369
+##  5 no         &gt;16 yrs     381
+##  6 no         &lt;NA&gt;         10
+##  7 yes        &lt;12 yrs    5215
+##  8 yes        12 yrs     8067
+##  9 yes        13-15 yrs  6583
+## 10 yes        16 yrs     3538
+## 11 yes        &gt;16 yrs    2765
+## 12 yes        &lt;NA&gt;         56
+## 13 &lt;NA&gt;       &lt;12 yrs      19
+## 14 &lt;NA&gt;       12 yrs       25
+## 15 &lt;NA&gt;       13-15 yrs    13
+## 16 &lt;NA&gt;       16 yrs        7
+## 17 &lt;NA&gt;       &gt;16 yrs       8
+## 18 &lt;NA&gt;       &lt;NA&gt;         15</code></pre>
+<p>It looks like we’re dealing with missing data, so let’s filter the data to only include data that is included. R has many convenient commands that allows us to remove the NA values.</p>
+<pre class="r"><code>GSSvocab %&gt;% 
+  drop_na() %&gt;% 
+  group_by(nativeBorn, educGroup) %&gt;% 
+  summarise(n = n())</code></pre>
+<pre><code>## # A tibble: 10 x 3
+## # Groups:   nativeBorn [2]
+##    nativeBorn educGroup     n
+##    &lt;fct&gt;      &lt;fct&gt;     &lt;int&gt;
+##  1 no         &lt;12 yrs     597
+##  2 no         12 yrs      475
+##  3 no         13-15 yrs   548
+##  4 no         16 yrs      353
+##  5 no         &gt;16 yrs     369
+##  6 yes        &lt;12 yrs    4667
+##  7 yes        12 yrs     7784
+##  8 yes        13-15 yrs  6394
+##  9 yes        16 yrs     3461
+## 10 yes        &gt;16 yrs    2712</code></pre>
+<p>Let’s visualize this in a plot. Let’s use a bar plot to see the relationship between the distribution of education levels across these two groups. From this data, we have a decent understanding of how to look at the relationships between categorical variables. Now, we’re going to take a dive into the relationship between different types of variables related to the wages that recent college graduates earn.</p>
+<pre class="r"><code>GSSvocab %&gt;% 
+  drop_na() %&gt;% 
+  ggplot(aes(x = nativeBorn, fill = educGroup))+
+  geom_bar(position = &quot;dodge&quot;) #change to fill after</code></pre>
+<p><img src="OAME-live_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+</div>
+<div id="fivethiryeight-data-numerical" class="section level2">
+<h2>FiveThiryEight Data (Numerical)</h2>
+<p>One perk of using R is that many organizations offer open data that are stored in R. We can use the <code>fivethirtyeight</code> package to use investigate some of the data that the website <a href="https://fivethirtyeight.com/">fivethirtyeight.com</a> uses for its stories. In fact, most of the journalists who are using data to report their stories offer open access to their repositories and code. For instance, FiveThirtyEight uses <a href="https://data.fivethirtyeight.com/">this website</a> for its repositiory. Much of the data is also stored on a <a href="https://github.com/">GitHub</a> repository for others to replicate analysis.</p>
+<p>Let’s look at a dataset of a sample of recent college graduates and is used to produce <a href="https://fivethirtyeight.com/features/the-economic-guide-to-picking-a-college-major/">this article</a>. In order to access the data, let’s call it using R. Then, we can inspect the data, and hopefully come up with a question to answer.</p>
+<pre class="r"><code>college_recent_grads # %&gt;% 
+ # View()</code></pre>
+<p>Let’s take a quick look at the basic metrics for the median variable. The median wage of the college graduates who were sampled. There are 173 majors included here. First, a histogram. From this, we can describe its shape, centre, and spread. I’ve added a colour outline to make the bins more obvious.</p>
+<pre class="r"><code>college_recent_grads %&gt;% 
+  ggplot(aes(x = median))+
+  geom_histogram(colour = &quot;white&quot;)</code></pre>
+<p><img src="OAME-live_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>Shape: There are some obvious outliers to the right, and it is skewed-right.</p>
+<p>Centre: The median appears to be around $35,000.</p>
+<p>Spread: The spread is high relative to the median.</p>
+<p>Now, let’s find some actual values for these using summary statistics. You’ll find this code is very intutive in regard to the way we think about computing statistics. We can alse use the <code>summary()</code> function for these.</p>
+<pre class="r"><code>college_recent_grads %&gt;% 
+  summarise(mean = mean(median), 
+            med = median(median), #careful naming your variables here
+            sd = sd(median), 
+            iqr = IQR(median))</code></pre>
+<pre><code>## # A tibble: 1 x 4
+##     mean   med     sd   iqr
+##    &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+## 1 40151. 36000 11470. 12000</code></pre>
+<p>It might be a good idea to investigate some of the outliers and relationship between the high and low median salaries. Let’s see if there’s a pattern with another variable? Let’s look to see if maybe we can see something with the <code>major category</code> variable.</p>
+<pre class="r"><code>college_recent_grads %&gt;% 
+  count(major_category, sort = TRUE)</code></pre>
+<pre><code>## # A tibble: 16 x 2
+##    major_category                          n
+##    &lt;chr&gt;                               &lt;int&gt;
+##  1 Engineering                            29
+##  2 Education                              16
+##  3 Humanities &amp; Liberal Arts              15
+##  4 Biology &amp; Life Science                 14
+##  5 Business                               13
+##  6 Health                                 12
+##  7 Computers &amp; Mathematics                11
+##  8 Agriculture &amp; Natural Resources        10
+##  9 Physical Sciences                      10
+## 10 Psychology &amp; Social Work                9
+## 11 Social Science                          9
+## 12 Arts                                    8
+## 13 Industrial Arts &amp; Consumer Services     7
+## 14 Law &amp; Public Policy                     5
+## 15 Communications &amp; Journalism             4
+## 16 Interdisciplinary                       1</code></pre>
+<p>It looks like there are 16 categories. Let’s take a quick look at a boxplot for the median salary of each major category. This is a great way to compare distributions.</p>
+<pre class="r"><code>college_recent_grads %&gt;% 
+  ggplot(aes(x = major_category, y = median))+
+  geom_boxplot()+
+  coord_flip()</code></pre>
+<p><img src="OAME-live_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p>Note that it’s difficult to detect any systematic pattern, so we’ll try and create an ordered list of categories so that we can look for some patterns. If we arrange the categories in order of median salary, we may find some patterns.</p>
+<pre class="r"><code>college_recent_grads %&gt;% 
+  mutate(major_category = fct_reorder(major_category, median)) %&gt;% 
+  ggplot(aes(x = major_category, y = median))+
+  geom_boxplot()+
+  coord_flip()+
+  theme_light()</code></pre>
+<p><img src="OAME-live_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p>Here’s another way to find the same information, and I made this plot a little more presentable with some titles and colours.</p>
+<pre class="r"><code>college_recent_grads %&gt;% 
+  group_by(major_category) %&gt;% 
+  summarise(med = median(median)) %&gt;% 
+  ungroup() %&gt;% 
+  mutate(major_category = fct_reorder(major_category, med)) %&gt;% 
+  ggplot(aes(x = major_category, y = med))+
+  geom_col(aes(fill = major_category))+
+  coord_flip()+
+  theme_light()+
+  scale_y_continuous(labels = scales::dollar_format())+
+  scale_fill_viridis_d()+
+  theme(legend.position = &quot;none&quot;)+
+  labs(x = &quot;Major Category&quot;,
+       y = &quot;Median&quot;)</code></pre>
+<p><img src="OAME-live_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p>Back to the boxlot. Another issue is that we have 16 categories, and some with only a few majors. Let’s group together interdisciplinary, comms &amp; journ, Law &amp; PP, Ind Arts &amp; CS, and Arts together. That will give us 11 categories and an “other” category. (Let’s work on making this plot a more pleasant in the live session) <em>I’d recommend having your students work with some plots that already exist and modifying them slightly in order to get a handle on the code that changes plots.</em></p>
+<pre class="r"><code>college_recent_grads %&gt;% 
+  mutate(major_category = fct_lump(major_category, 11)) %&gt;% 
+  mutate(major_category = fct_reorder(major_category, median)) %&gt;% 
+  ggplot(aes(x = major_category, y = median))+
+  geom_boxplot()+
+  coord_flip()</code></pre>
+<p><img src="OAME-live_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p>Lastly, let’s look at whether there’s a relationship between the share of women in the major and the median salary in the field. To do this, we can correlation and a plot to get a sense of what this looks like.</p>
+<pre class="r"><code>college_recent_grads %&gt;%
+  #mutate(median = median/1000) %&gt;% 
+  #mutate(major_category = fct_reorder(major_category, -median)) %&gt;% 
+  select(major_category, sharewomen, median, major) %&gt;% 
+  ggplot(aes(x = sharewomen, y = median))+
+  geom_point()+ # also add in colour here
+  scale_color_viridis_d()+
+  theme_light()</code></pre>
+<p><img src="OAME-live_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<pre class="r"><code>  #geom_smooth(method = &quot;lm&quot;) Don&#39;t forget to add +</code></pre>
+<p>This is a trend that we may want to investigate because it looks like there’s a reasonable association here. The median salary has a moderate, negative and linear relationship with the share of women who are in the field.</p>
+<p>Let’s try and fit a model here. Before we fit, we check to see the correlation coefficient between the two variables.</p>
+<pre class="r"><code>college_recent_grads %&gt;% 
+  select(sharewomen, median) %&gt;% 
+  cor(use = &quot;complete.obs&quot;)</code></pre>
+<pre><code>##            sharewomen     median
+## sharewomen  1.0000000 -0.6186898
+## median     -0.6186898  1.0000000</code></pre>
+<p>Now, let’s show a linear model on the data.</p>
+<pre class="r"><code>college_recent_grads %&gt;% 
+  select(sharewomen, median) %&gt;% 
+  ggplot(aes(x = sharewomen, y = median))+
+  geom_point()+
+  geom_smooth(method = &quot;lm&quot;)</code></pre>
+<p><img src="OAME-live_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p>Now, let’s find the model terms and the statistics of the model.</p>
+<pre class="r"><code>college_recent_grads %&gt;% 
+  select(sharewomen, median) %&gt;% 
+  lm(median ~ sharewomen, data = .) %&gt;% 
+  tidy() %&gt;% 
+  kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">std.error</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">56093.31</td>
+<td align="right">1705.115</td>
+<td align="right">32.89708</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">sharewomen</td>
+<td align="right">-30669.94</td>
+<td align="right">2987.010</td>
+<td align="right">-10.26777</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>college_recent_grads %&gt;% 
+  select(sharewomen, median) %&gt;% 
+  lm(median ~ sharewomen, data = .) %&gt;% 
+  glance() %&gt;% 
+  kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">r.squared</th>
+<th align="right">adj.r.squared</th>
+<th align="right">sigma</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+<th align="right">df</th>
+<th align="right">logLik</th>
+<th align="right">AIC</th>
+<th align="right">BIC</th>
+<th align="right">deviance</th>
+<th align="right">df.residual</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0.382777</td>
+<td align="right">0.3791463</td>
+<td align="right">9030.918</td>
+<td align="right">105.4272</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">-1809.698</td>
+<td align="right">3625.396</td>
+<td align="right">3634.838</td>
+<td align="right">13864770781</td>
+<td align="right">170</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
